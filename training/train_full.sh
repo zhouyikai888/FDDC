@@ -2,9 +2,9 @@
 # Modified from the Holosoma framework (Amazon FAR, Apache-2.0): https://github.com/amazon-far/holosoma
 # FDDC training launcher — 8-GPU FastSAC WBT single-leg-balance training.
 # DATA defaults to the released stratified motion set (data_stratified_900/train); override via env.
-# Default "stable" setup: 2048 env/GPU + buffer_size=384 (measured peak ~6.5GB/GPU, comfortable margin)
-# For higher throughput: set NUM_ENVS=24576 (3072/GPU, peak ~8.3GB, thin margin)
-# To keep the default large buffer: NUM_ENVS=8192 (1024/GPU) and drop the buffer_size line below
+# Default matches the paper (Table 6): NUM_ENVS=8192 total = 1024/GPU on 8 GPUs, with the framework's
+# default replay buffer. For higher throughput on more memory, raise NUM_ENVS (e.g. 16384 = 2048/GPU);
+# if memory then gets tight, cap the replay buffer with BUFFER=<n> (adds --algo.config.buffer_size).
 set -e
 export OMNI_KIT_ACCEPT_EULA=1
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True   # anti-fragmentation; required at the memory boundary
@@ -15,8 +15,8 @@ export TRITON_LIBCUDA_PATH=${TRITON_LIBCUDA_PATH:-/usr/lib/x86_64-linux-gnu}
 export CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-0,1,2,3,4,5,6,7}
 NPROC=$(echo "$CUDA_VISIBLE_DEVICES" | awk -F, '{print NF}')   # num processes = num visible GPUs
 
-NUM_ENVS=${NUM_ENVS:-16384}            # global total; torchrun splits by /8 = 2048/GPU
-BUFFER=${BUFFER:-384}
+NUM_ENVS=${NUM_ENVS:-8192}             # global total (paper Table 6); torchrun splits by /8 = 1024/GPU
+BUFFER=${BUFFER:-}                      # empty = framework default replay buffer (paper config); set to cap it
 DATA=${DATA:-/path/to/data_stratified_900/train}   # motion dir = the released FDDC training set; override via env
 
 cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"   # cd to the script's repo root; survives rename/move
@@ -34,12 +34,12 @@ EXTRA_ARGS=()
 [ -n "$ITERS" ] && EXTRA_ARGS+=("--algo.config.num_learning_iterations=$ITERS")
 [ -n "$PROJECT" ]  && EXTRA_ARGS+=("--training.project=$PROJECT")
 [ -n "$RUN_NAME" ] && EXTRA_ARGS+=("--logger.name=$RUN_NAME")
+[ -n "$BUFFER" ]   && EXTRA_ARGS+=("--algo.config.buffer_size=$BUFFER")
 
 "$TORCHRUN" --standalone --nproc_per_node=$NPROC src/holosoma/holosoma/train_agent.py \
     exp:g1-29dof-wbt-fast-sac \
     logger:wandb \
     --logger.video.enabled=False \
     --training.num-envs=$NUM_ENVS \
-    --algo.config.buffer_size=$BUFFER \
     "$MC.motion_dir=$DATA" \
     "${EXTRA_ARGS[@]}"

@@ -62,7 +62,7 @@ which runs (see `train_full.sh` for the overridable knobs):
 ```bash
 torchrun --standalone --nproc_per_node=8 src/holosoma/holosoma/train_agent.py \
     exp:g1-29dof-wbt-fast-sac  logger:wandb  --logger.video.enabled=False \
-    --training.num-envs=16384  --algo.config.buffer_size=384 \
+    --training.num-envs=8192 \
     "--command.setup_terms.motion_command.params.motion_config.motion_dir=$DATA"
 ```
 
