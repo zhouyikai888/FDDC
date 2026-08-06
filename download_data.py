@@ -11,6 +11,8 @@ Override the source repo with the FDDC_HF_REPO env var if you mirror the dataset
 import os
 
 HF_REPO = os.environ.get("FDDC_HF_REPO", "zhouyikai/FDDC-single-leg-balance")
+# Pin a fixed dataset revision so the download is reproducible even if the HF main branch later changes.
+HF_REVISION = os.environ.get("FDDC_HF_REVISION", "17668899428b3e31fbbc6cf32253cfcfeec71922")
 DEST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "data_stratified_900")
 
 

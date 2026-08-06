@@ -18,6 +18,10 @@ Unitree G1 29-DoF MuJoCo model, and (2) distilled a compact, difficulty-stratifi
 and support sides (seed 42). Per-clip class / bin / support / split labels are in
 data_stratified_900/dataset_info.json (and manifest.csv). See the FDDC paper, Appendix E.
 
+These modifications (retargeting + distillation) were made for FDDC by the FDDC authors in July 2026,
+stated here as required for a GPL-3.0 derivative (GPL-3.0 §5(a): a modified work carries prominent
+notices stating that it was changed, and the date).
+
 License
 -------
 The AMS dataset is released under GPL-3.0 (full text in data/LICENSE). As a derivative work, these

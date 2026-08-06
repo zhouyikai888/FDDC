@@ -15,7 +15,7 @@
  },
  "seed": 42,
  "n_train": 720,
- "n_test": 180,
+ "n_test": 90,
  "manifest": [
   {
    "motion": "left_3304",
@@ -453,7 +453,7 @@
    "pelvis_bin": 0,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.455,
    "swing": 0.2803
   },
@@ -463,7 +463,7 @@
    "pelvis_bin": 0,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4178,
    "swing": 0.2196
   },
@@ -473,7 +473,7 @@
    "pelvis_bin": 0,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4205,
    "swing": 0.1046
   },
@@ -493,7 +493,7 @@
    "pelvis_bin": 0,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4374,
    "swing": 0.1146
   },
@@ -503,7 +503,7 @@
    "pelvis_bin": 0,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4229,
    "swing": 0.1111
   },
@@ -923,7 +923,7 @@
    "pelvis_bin": 0,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4552,
    "swing": 0.1581
   },
@@ -933,7 +933,7 @@
    "pelvis_bin": 0,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5085,
    "swing": 0.2027
   },
@@ -943,7 +943,7 @@
    "pelvis_bin": 0,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5086,
    "swing": 0.1496
   },
@@ -953,7 +953,7 @@
    "pelvis_bin": 0,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4968,
    "swing": 0.1795
   },
@@ -973,7 +973,7 @@
    "pelvis_bin": 0,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4801,
    "swing": 0.2183
   },
@@ -1423,7 +1423,7 @@
    "pelvis_bin": 0,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4993,
    "swing": 0.4035
   },
@@ -1433,7 +1433,7 @@
    "pelvis_bin": 0,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.481,
    "swing": 0.2853
   },
@@ -1473,7 +1473,7 @@
    "pelvis_bin": 0,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.499,
    "swing": 0.4379
   },
@@ -1493,7 +1493,7 @@
    "pelvis_bin": 0,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5097,
    "swing": 0.372
   },
@@ -1513,7 +1513,7 @@
    "pelvis_bin": 0,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5077,
    "swing": 0.4013
   },
@@ -1933,7 +1933,7 @@
    "pelvis_bin": 0,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4833,
    "swing": 0.3252
   },
@@ -1943,7 +1943,7 @@
    "pelvis_bin": 0,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4424,
    "swing": 0.4536
   },
@@ -1973,7 +1973,7 @@
    "pelvis_bin": 0,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4249,
    "swing": 0.4125
   },
@@ -1983,7 +1983,7 @@
    "pelvis_bin": 0,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4588,
    "swing": 0.3125
   },
@@ -1993,7 +1993,7 @@
    "pelvis_bin": 0,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5104,
    "swing": 0.4202
   },
@@ -2423,7 +2423,7 @@
    "pelvis_bin": 0,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4746,
    "swing": 0.5756
   },
@@ -2433,7 +2433,7 @@
    "pelvis_bin": 0,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4972,
    "swing": 0.5147
   },
@@ -2463,7 +2463,7 @@
    "pelvis_bin": 0,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4821,
    "swing": 0.5118
   },
@@ -2483,7 +2483,7 @@
    "pelvis_bin": 0,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.455,
    "swing": 0.5846
   },
@@ -2493,7 +2493,7 @@
    "pelvis_bin": 0,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4897,
    "swing": 0.591
   },
@@ -2933,7 +2933,7 @@
    "pelvis_bin": 0,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5002,
    "swing": 0.6062
   },
@@ -2953,7 +2953,7 @@
    "pelvis_bin": 0,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4712,
    "swing": 0.579
   },
@@ -2993,7 +2993,7 @@
    "pelvis_bin": 0,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4791,
    "swing": 0.5693
   },
@@ -3003,7 +3003,7 @@
    "pelvis_bin": 0,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4897,
    "swing": 0.6493
   },
@@ -3013,7 +3013,7 @@
    "pelvis_bin": 0,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.4321,
    "swing": 0.5931
   },
@@ -3423,7 +3423,7 @@
    "pelvis_bin": 1,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5642,
    "swing": 0.2332
   },
@@ -3433,7 +3433,7 @@
    "pelvis_bin": 1,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6271,
    "swing": 0.2343
   },
@@ -3463,7 +3463,7 @@
    "pelvis_bin": 1,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5281,
    "swing": 0.2551
   },
@@ -3473,7 +3473,7 @@
    "pelvis_bin": 1,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5397,
    "swing": 0.2761
   },
@@ -3503,7 +3503,7 @@
    "pelvis_bin": 1,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5481,
    "swing": 0.1572
   },
@@ -3923,7 +3923,7 @@
    "pelvis_bin": 1,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5368,
    "swing": 0.1751
   },
@@ -3953,7 +3953,7 @@
    "pelvis_bin": 1,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6161,
    "swing": 0.1484
   },
@@ -3973,7 +3973,7 @@
    "pelvis_bin": 1,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6079,
    "swing": 0.1534
   },
@@ -3993,7 +3993,7 @@
    "pelvis_bin": 1,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5981,
    "swing": 0.2068
   },
@@ -4003,7 +4003,7 @@
    "pelvis_bin": 1,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5387,
    "swing": 0.1384
   },
@@ -4443,7 +4443,7 @@
    "pelvis_bin": 1,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5378,
    "swing": 0.4566
   },
@@ -4453,7 +4453,7 @@
    "pelvis_bin": 1,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5769,
    "swing": 0.3111
   },
@@ -4463,7 +4463,7 @@
    "pelvis_bin": 1,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5451,
    "swing": 0.476
   },
@@ -4483,7 +4483,7 @@
    "pelvis_bin": 1,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5893,
    "swing": 0.4754
   },
@@ -4503,7 +4503,7 @@
    "pelvis_bin": 1,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6322,
    "swing": 0.4089
   },
@@ -4923,7 +4923,7 @@
    "pelvis_bin": 1,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5761,
    "swing": 0.4071
   },
@@ -4933,7 +4933,7 @@
    "pelvis_bin": 1,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5649,
    "swing": 0.4151
   },
@@ -4963,7 +4963,7 @@
    "pelvis_bin": 1,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6374,
    "swing": 0.4183
   },
@@ -4973,7 +4973,7 @@
    "pelvis_bin": 1,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6038,
    "swing": 0.2944
   },
@@ -4993,7 +4993,7 @@
    "pelvis_bin": 1,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6438,
    "swing": 0.3682
   },
@@ -5423,7 +5423,7 @@
    "pelvis_bin": 1,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6122,
    "swing": 0.5636
   },
@@ -5453,7 +5453,7 @@
    "pelvis_bin": 1,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6347,
    "swing": 0.5225
   },
@@ -5463,7 +5463,7 @@
    "pelvis_bin": 1,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6403,
    "swing": 0.6417
   },
@@ -5473,7 +5473,7 @@
    "pelvis_bin": 1,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5804,
    "swing": 0.4999
   },
@@ -5483,7 +5483,7 @@
    "pelvis_bin": 1,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5267,
    "swing": 0.4989
   },
@@ -5943,7 +5943,7 @@
    "pelvis_bin": 1,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6322,
    "swing": 0.5585
   },
@@ -5953,7 +5953,7 @@
    "pelvis_bin": 1,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6415,
    "swing": 0.63
   },
@@ -5973,7 +5973,7 @@
    "pelvis_bin": 1,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5936,
    "swing": 0.5011
   },
@@ -5993,7 +5993,7 @@
    "pelvis_bin": 1,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.585,
    "swing": 0.6084
   },
@@ -6013,7 +6013,7 @@
    "pelvis_bin": 1,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.5333,
    "swing": 0.4833
   },
@@ -6443,7 +6443,7 @@
    "pelvis_bin": 2,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7522,
    "swing": 0.1818
   },
@@ -6453,7 +6453,7 @@
    "pelvis_bin": 2,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7185,
    "swing": 0.1979
   },
@@ -6463,7 +6463,7 @@
    "pelvis_bin": 2,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7121,
    "swing": 0.1369
   },
@@ -6483,7 +6483,7 @@
    "pelvis_bin": 2,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7562,
    "swing": 0.2112
   },
@@ -6513,7 +6513,7 @@
    "pelvis_bin": 2,
    "swing_bin": 0,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.695,
    "swing": 0.2318
   },
@@ -6933,7 +6933,7 @@
    "pelvis_bin": 2,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7415,
    "swing": 0.2559
   },
@@ -6953,7 +6953,7 @@
    "pelvis_bin": 2,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7671,
    "swing": 0.2193
   },
@@ -6963,7 +6963,7 @@
    "pelvis_bin": 2,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6942,
    "swing": 0.216
   },
@@ -6973,7 +6973,7 @@
    "pelvis_bin": 2,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6588,
    "swing": 0.1398
   },
@@ -6983,7 +6983,7 @@
    "pelvis_bin": 2,
    "swing_bin": 0,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7223,
    "swing": 0.2365
   },
@@ -7423,7 +7423,7 @@
    "pelvis_bin": 2,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7072,
    "swing": 0.3734
   },
@@ -7443,7 +7443,7 @@
    "pelvis_bin": 2,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6947,
    "swing": 0.4768
   },
@@ -7463,7 +7463,7 @@
    "pelvis_bin": 2,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7228,
    "swing": 0.3249
   },
@@ -7473,7 +7473,7 @@
    "pelvis_bin": 2,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6683,
    "swing": 0.354
   },
@@ -7513,7 +7513,7 @@
    "pelvis_bin": 2,
    "swing_bin": 1,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7625,
    "swing": 0.3484
   },
@@ -7923,7 +7923,7 @@
    "pelvis_bin": 2,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6874,
    "swing": 0.4526
   },
@@ -7953,7 +7953,7 @@
    "pelvis_bin": 2,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6944,
    "swing": 0.4223
   },
@@ -7963,7 +7963,7 @@
    "pelvis_bin": 2,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6824,
    "swing": 0.3091
   },
@@ -8003,7 +8003,7 @@
    "pelvis_bin": 2,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6502,
    "swing": 0.4328
   },
@@ -8013,7 +8013,7 @@
    "pelvis_bin": 2,
    "swing_bin": 1,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6496,
    "swing": 0.2884
   },
@@ -8423,7 +8423,7 @@
    "pelvis_bin": 2,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7413,
    "swing": 0.6136
   },
@@ -8443,7 +8443,7 @@
    "pelvis_bin": 2,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.678,
    "swing": 0.578
   },
@@ -8453,7 +8453,7 @@
    "pelvis_bin": 2,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7249,
    "swing": 0.5237
   },
@@ -8473,7 +8473,7 @@
    "pelvis_bin": 2,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7242,
    "swing": 0.5714
   },
@@ -8503,7 +8503,7 @@
    "pelvis_bin": 2,
    "swing_bin": 2,
    "support": "L",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6754,
    "swing": 0.5908
   },
@@ -8933,7 +8933,7 @@
    "pelvis_bin": 2,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6733,
    "swing": 0.636
   },
@@ -8943,7 +8943,7 @@
    "pelvis_bin": 2,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.688,
    "swing": 0.6104
   },
@@ -8953,7 +8953,7 @@
    "pelvis_bin": 2,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6673,
    "swing": 0.5568
   },
@@ -8963,7 +8963,7 @@
    "pelvis_bin": 2,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.6487,
    "swing": 0.4923
   },
@@ -9003,7 +9003,7 @@
    "pelvis_bin": 2,
    "swing_bin": 2,
    "support": "R",
-   "split": "test",
+   "split": "val",
    "pelvis": 0.7206,
    "swing": 0.6409
   },
@@ -9028,5 +9028,6 @@
   "seed": 42,
   "stratified": "9 classes x left/right, 5+5 each",
   "note": "val for checkpoint selection (model selection); test for reporting generalization (avoids test-set selection leakage)"
- }
+ },
+ "n_val": 90
 }
