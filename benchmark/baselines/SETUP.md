@@ -41,14 +41,18 @@ DATA="$(pwd)/../../data/data_stratified_900/test"   # the 90 held-out test clips
 
 ## 2. Per-baseline: repo, weights, env vars, and command
 
-Run the full test set with `shard=0 nshards=1`. The **metrics sub-command differs per adapter** (an
-artifact of the original per-method scripts): ProtoMotions is positional, MOSAIC uses `run`, GMT / TWIST
-/ OmniXtreme / Humanoid-GPT / SONIC use `runs`, HoloMotion uses `runm`. See each adapter's docstring.
+Run the full test set with `shard=0 nshards=1`. Use the **metrics sub-command** — the one that calls the
+shared `metrics.py` and writes the unified `success` field. **Do not use a diagnostic branch** such as
+mosaic's `run` (it emits `strict_success`, not `success`, so the aggregator below would silently read a
+missing field as 0 and report a spurious 0% Perfect). The metrics sub-command differs per adapter (an
+artifact of the original per-method scripts): ProtoMotions is positional; GMT / TWIST / OmniXtreme /
+Humanoid-GPT / MOSAIC / SONIC use `runs`; HoloMotion uses `runm`. Confirm the output JSON has a
+`success` field; see each adapter's docstring.
 
 | Baseline | Repo / weights (from the authors) | Env vars | Command (from `benchmark/baselines/`) |
 |---|---|---|---|
 | **ProtoMotions** (weights only) | [NVlabs/ProtoMotions](https://github.com/NVlabs/ProtoMotions) → `unified_pipeline.onnx` | `PROTO_ONNX` | `python proto_eval.py "$DATA" proto 0 1 1 ./out_proto` |
-| **MOSAIC** (weights only) | [BAAI-Humanoid/MOSAIC](https://github.com/BAAI-Humanoid/MOSAIC), HF [BAAI-Humanoid/MOSAIC_Model](https://huggingface.co/BAAI-Humanoid/MOSAIC_Model) → `gmt.onnx` | `MOSAIC_ONNX` | `python mosaic_eval.py run "$DATA" mosaic 0 1 ./out_mosaic` |
+| **MOSAIC** (weights only) | [BAAI-Humanoid/MOSAIC](https://github.com/BAAI-Humanoid/MOSAIC), HF [BAAI-Humanoid/MOSAIC_Model](https://huggingface.co/BAAI-Humanoid/MOSAIC_Model) → `gmt.onnx` | `MOSAIC_ONNX` | `python mosaic_eval.py runs "$DATA" mosaic 0 1 ./out_mosaic` |
 | **SONIC** (weights only) | [NVlabs/GR00T-WholeBodyControl](https://github.com/NVlabs/GR00T-WholeBodyControl), HF [nvidia/GEAR-SONIC](https://huggingface.co/nvidia/GEAR-SONIC) → the **root** `model_encoder.onnx` (obs **1762**) + `model_decoder.onnx` (obs 994). **NOT** the `low_latency/` variant (1247-dim) — this adapter matches the root model. | `SONIC_DIR` (dir with both root ONNX) | `python sonic_eval.py runs "$DATA" sonic 0 1 ./out_sonic` |
 | **GMT** (repo) | [zixuan417/humanoid-general-motion-tracking](https://github.com/zixuan417/humanoid-general-motion-tracking); weights `assets/pretrained_checkpoints/pretrained.pt` in-repo. Needs `mujoco_viewer`. | `GMT_REPO`, `GMT_WEIGHTS` | `python gmt_eval.py runs "$DATA" gmt 0 1 ./out_gmt` |
 | **TWIST** (repo) | [YanjieZe/TWIST](https://github.com/YanjieZe/TWIST) → `twist_general_motion_tracker.pt` (TorchScript); adapter reads `$TWIST_REPO/assets/g1/g1_sim2sim_with_wrist_roll.xml`. | `TWIST_REPO`, `TWIST_WEIGHTS` | `python twist_eval.py runs "$DATA" twist 0 1 ./out_twist` |
@@ -87,8 +91,10 @@ import json, glob
 pm = {}
 for f in glob.glob("./out_proto/*.json"):       # <- the run's output dir
     pm.update(json.load(open(f)).get("per_motion", {}))
-s  = [v.get("success", 0) for v in pm.values()]  # Perfect
-fl = [v.get("fell", 0)    for v in pm.values()]  # Failure
+assert pm and "success" in next(iter(pm.values())), \
+    "no 'success' field -> wrong sub-command; use the metrics one (runs / positional / runm)"
+s  = [v["success"] for v in pm.values()]         # Perfect (unified 'success' from metrics.py)
+fl = [v["fell"]    for v in pm.values()]         # Failure
 n = len(s)
 P, F = 100*sum(s)/n, 100*sum(fl)/n
 print(f"n={n}  Perfect={P:.1f}%  Marginal={max(0,100-P-F):.1f}%  Failure={F:.1f}%")
