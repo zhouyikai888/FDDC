@@ -10,8 +10,7 @@ Override the source repo with the FDDC_HF_REPO env var if you mirror the dataset
 """
 import os
 
-# TODO(maintainer): set this to the published HuggingFace dataset id once created.
-HF_REPO = os.environ.get("FDDC_HF_REPO", "<hf-username>/FDDC-single-leg-balance")
+HF_REPO = os.environ.get("FDDC_HF_REPO", "zhouyikai/FDDC-single-leg-balance")
 DEST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "data_stratified_900")
 
 
