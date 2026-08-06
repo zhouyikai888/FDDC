@@ -4,6 +4,8 @@
 
 📄 Paper: [arXiv:2608.00500](https://arxiv.org/abs/2608.00500)
 
+![FDDC holds clean single-leg balance across 90 stratified poses and transfers to a real Unitree G1](assets/fig_teaser.png)
+
 Unified humanoid policies track dances, runs, and backflips, yet stumble on a simple demand: staying
 balanced on one leg. FDDC is the first single-leg-balance policy to deploy **directly on a real Unitree
 G1 without teacher–student distillation**. Its key idea is a *deployable* dynamic-CoM observation: the
@@ -13,6 +15,12 @@ exactly and the balance signal becomes reconstructible from encoders + IMU alone
 reward library translated term-by-term from human postural-control science (margin of stability,
 time-to-boundary, ankle→knee→hip hierarchy, jerk), and trained by asymmetric FastSAC with a privileged
 critic.
+
+![FDDC method overview: an asymmetric actor–critic where the deployable actor sees a support-relative dynamic-CoM state and a human-science reward library shapes balance](assets/fig1_overview.png)
+
+The same trained actor runs **directly on a real Unitree G1** (no distillation):
+
+![FDDC deployed on a real Unitree G1, holding single-leg balance across distinct poses](assets/fig_realrobot_montage.png)
 
 This repository lets anyone **reproduce the benchmark for the deployed FDDC checkpoint** (`model_0262000.pt`)
 and score it under the exact conditions from the paper — from the `.pt` alone, no ONNX, no IsaacSim,
