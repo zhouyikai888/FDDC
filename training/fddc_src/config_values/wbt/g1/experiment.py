@@ -101,7 +101,7 @@ g1_29dof_wbt_fast_sac = ExperimentConfig(
         config=replace(
             algo.fast_sac.config,
             num_learning_iterations=400000,
-            save_interval=2000,  # save a pt every 2000 iters (changed from 1000 on 2026-07-22; pairs with save_start_step)
+            save_interval=2000,  # save a pt every 2000 iters (pairs with save_start_step)
             save_start_step=150000,  # no pt saved before step 150000 (affects checkpointing only, not the wandb curves; set 0 to save from the start)
             v_max=20.0,
             v_min=-20.0,

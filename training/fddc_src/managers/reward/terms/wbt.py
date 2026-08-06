@@ -290,7 +290,7 @@ def _xcom_xy(
     """Extrapolated CoM (Hof / LIP): xcom_xy = com_xy + com_vel_xy / omega, omega = sqrt(g / h).
 
     use_velocity=False -> degenerates to the static geometric CoM (com_xy only), for the dynamic/static-CoM ablation.
-    [Decoupled 2026-07-22] the dynamic/static switch was split from a single XCOM_USE_VELOCITY into two independent actor/critic flags
+    The dynamic/static switch was split from a single XCOM_USE_VELOCITY into two independent actor/critic flags
     (see observation/terms/wbt.py:ACTOR_XCOM_USE_VELOCITY / CRITIC_XCOM_USE_VELOCITY).
     - polygon / xcom_ttb rewards: use this function's default use_velocity=True (always dynamic; both are =0 in the headline, so no effect);
     - critic obs whole_body_xcom_rel_support_center: passes use_velocity=CRITIC_XCOM_USE_VELOCITY explicitly;

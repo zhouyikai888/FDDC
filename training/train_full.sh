@@ -28,7 +28,7 @@ TORCHRUN=${TORCHRUN:-torchrun}  # torchrun from the activated training env (hssi
 # ITERS=<n> overrides num_learning_iterations (when resuming, must exceed the checkpoint step, else it stops immediately).
 CKPT=${CKPT:-}
 ITERS=${ITERS:-}
-PROJECT=${PROJECT:-}       # wandb project name (ablations used balance_ablation); empty = config default WholeBodyTracking
+PROJECT=${PROJECT:-}       # wandb project name override; empty = the config's default project
 RUN_NAME=${RUN_NAME:-}     # per-run name (wandb run name); empty = auto timestamp name
 EXTRA_ARGS=()
 [ -n "$CKPT" ]  && EXTRA_ARGS+=("--training.checkpoint=$CKPT")

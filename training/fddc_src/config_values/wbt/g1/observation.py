@@ -26,7 +26,7 @@ actor_obs_shared = ObsGroupCfg(
             noise=0.05,
         ),
         "base_ang_vel": ObsTermCfg(
-            func="holosoma.managers.observation.terms.wbt:base_ang_vel",  # ablation baseline: remove IMU OU, back to clean observation, 2026-07-19
+            func="holosoma.managers.observation.terms.wbt:base_ang_vel",
             scale=1.0,
             noise=0.2,
         ),
@@ -46,7 +46,7 @@ actor_obs_shared = ObsGroupCfg(
             noise=0.0,
         ),
         "projected_gravity": ObsTermCfg(
-            func="holosoma.managers.observation.terms.wbt:projected_gravity",  # ablation baseline: remove IMU OU, back to clean observation, 2026-07-19
+            func="holosoma.managers.observation.terms.wbt:projected_gravity",
             scale=1.0,
             noise=0.03,
         ),

@@ -42,7 +42,7 @@ g1_29dof_wbt_reward = RewardManagerCfg(
         ),
         "motion_global_body_ang_vel": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:motion_global_body_ang_vel",
-            params={"sigma": 3.14},  # reverted to 072007: loose tracking, more freedom for balance (tightening reduces sway but steals balance freedom; a trade-off -> reverted)
+            params={"sigma": 3.14},
             weight=1.0,
         ),
         # Regularization rewards
@@ -78,7 +78,7 @@ g1_29dof_wbt_reward = RewardManagerCfg(
                 "stance_miss_weight": 1.0,
                 "swing_extra_contact_weight": 1.0,
             },
-            weight=-2.0,  # reverted to the 0705 value (re-running the 0705 config, 2026-07-15)
+            weight=-2.0,
         ),
         # Balance: penalize the extrapolated CoM (xCoM) approaching/leaving the support polygon.
         # LINEAR hinge (penalty_power=1): weight * relu(safety - margin); safety=0.02 ≈ the reference's
@@ -95,21 +95,21 @@ g1_29dof_wbt_reward = RewardManagerCfg(
                 "max_penalty": 0.04,
                 "penalty_power": 1.0,  # linear hinge (squared -> 1): only linear gives an appreciable gradient at meter-scale margins
             },
-            weight=-20.0,  # [tuning] xcom_polygon weight -20 (baseline=-50; back to polygon_w20 on 2026-07-24)
+            weight=-20.0,
         ),
         # Balance: penalize small Time-To-Boundary of the xCoM (time to cross the support polygon).
         "xcom_ttb": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:XcomTtbPenalty",
             params={
                 "threshold": 1.0,
-                "single_support_ttb_threshold": 0.30,  # reverted to the 072007 value (fine-tune changes only the DR)
+                "single_support_ttb_threshold": 0.30,
                 "double_support_ttb_threshold": 0.20,
                 "v_min": 0.01,
                 "gravity": 9.81,
                 "com_height_floor": 0.25,
                 "max_penalty": 0.09,
             },
-            weight=-15.0,  # xcom_ttb balance reward (baseline value); restored 2026-07-24
+            weight=-15.0,
         ),
         # Anti-slip: during single-leg support, penalize the support foot's horizontal sliding.
         "single_support_foot_slip_penalty": RewardTermCfg(
@@ -127,7 +127,7 @@ g1_29dof_wbt_reward = RewardManagerCfg(
                 "threshold": 1.0,
                 "joint_weights": [1.0, 1.0],
             },
-            weight=-0.3,  # stance_ankle_action_rate (polygon_w20/baseline value); restored 2026-07-28
+            weight=-0.3,
         ),
     }
 )
@@ -137,17 +137,17 @@ g1_29dof_wbt_fast_sac_reward = RewardManagerCfg(
         **g1_29dof_wbt_reward.terms,
         "action_rate_l2": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:penalty_action_rate",
-            weight=-1.0,  # proven from-scratch value (072007); anti-flail is achieved via convergence/stability, not a heavier action-rate
+            weight=-1.0,  # anti-flail comes from convergence/stability, not a heavier action-rate
         ),
         # Action jerk (2nd difference of actions). Surgical anti-chatter: ~0 for smooth motion of any
         # speed, only bites on high-frequency reversals -> targets foot-chatter WITHOUT the over-smoothing
-        # a heavier action_rate causes. Measured (072007, 7 motions): jerk raw ~1.28x action_rate, so at
+        # a heavier action_rate causes. Measured: jerk raw ~1.28x action_rate, so at
         # -0.1 the per-step contribution ~-0.167 = 13% of action_rate (-1.304) -- a light targeted nudge
         # below the over-smoothing zone (action_rate -1.5 = +50% regressed). Tune by 500-eval.
-        # Impl: ActionJerkPenalty in managers/reward/terms/wbt.py (added 2026-07-17).
+        # Impl: ActionJerkPenalty in managers/reward/terms/wbt.py.
         "action_jerk": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:ActionJerkPenalty",
-            weight=-0.1,  # action_jerk (baseline value); restored 2026-07-24
+            weight=-0.1,
         ),
         # Stance-leg KNEE action-rate, single-support gated -- mirrors stance_ankle_action_rate on the
         # knee. Reuses the generic stance-joint action-rate impl via a thin StanceKneeActionRatePenalty
@@ -161,7 +161,7 @@ g1_29dof_wbt_fast_sac_reward = RewardManagerCfg(
                 "threshold": 1.0,
                 "joint_weights": [1.0],
             },
-            weight=-0.1,  # stance_knee_action_rate (polygon_w20/baseline value); restored 2026-07-28
+            weight=-0.1,
         ),
         "motion_global_ref_position_error_exp": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:motion_global_ref_position_error_exp",

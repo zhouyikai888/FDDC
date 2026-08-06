@@ -524,11 +524,11 @@ def load_motion_npz(motion_id: str):
 
 class NpzMotionReference:
     """Serves the motion-reference obs terms straight from the motion npz, byte-for-byte reproducing the
-    baked-ONNX reference branch (verified vs model_0400000_left_92.onnx): joint_pos = npz joints[t];
+    baked-ONNX reference branch (verified to reproduce it): joint_pos = npz joints[t];
     joint_vel = npz joint_vel[t][6:35]; ref_quat_xyzw = torso_link quat (wxyz->xyzw); reference_support_phase
     = npz reference_support_phase[t]; future (5 frames t+1..t+5, clamped to the last frame at the end) drives
     future_cmd (joint_pos+joint_vel per frame, 5*58=290) and future_support_phase (5*2=10). Lets ONE policy
-    ONNX be scored against ANY of the 500 motions without re-baking a per-motion ONNX."""
+    ONNX be scored against ANY motion without re-baking a per-motion ONNX."""
 
     def __init__(self, npz):
         self.jp = np.asarray(npz["joint_pos"])[:, 7:36].astype(np.float32)      # (T,29) reference joint pos

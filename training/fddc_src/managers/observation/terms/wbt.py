@@ -191,9 +191,9 @@ def future_cmd(env: WholeBodyTrackingManager, num_future_frames: int = 10) -> to
     return torch.cat(frames, dim=-1)
 
 
-# [Ablation switch / decoupled 2026-07-22] dynamic vs static CoM: actor and critic independently control whether to use the velocity-extrapolation term (dynamic xCoM).
+# [Ablation switch] dynamic vs static CoM: actor and critic independently control whether to use the velocity-extrapolation term (dynamic xCoM).
 # True = dynamic (xCoM = CoM + velocity extrapolation, capture-point/LIP, baseline); False = static (pure geometric CoM, drops velocity).
-# Why decouple: to isolate the core novelty -- headline (actor+critic both dynamic) vs Run B (actor static, critic dynamic) differ only at the actor,
+# Why decouple: to isolate the core novelty -- headline (actor+critic both dynamic) vs the actor-static / critic-dynamic ablation, which differs only at the actor,
 # removing the critic (privileged, not deployed) confound, directly proving the dynamic part of the deployable actor observation is what matters.
 # Note: the polygon / xcom_ttb rewards are not controlled by these flags (they use _xcom_xy with default use_velocity=True, always dynamic; both are =0 in the headline anyway).
 ACTOR_XCOM_USE_VELOCITY = True   # controls the actor whole_body_com_rel_support_center (deployable); False -> return position only (N,2)
@@ -285,7 +285,7 @@ def whole_body_com_rel_support_center(
     pos_b = quat_rotate_inverse(_base_quat(env), rel_pos_w, w_last=True)[:, :2]
 
     # [Ablation switch] static-CoM position observation: ACTOR_XCOM_USE_VELOCITY=False -> keep only the CoM-rel-support position (N,2),
-    # dropping the dynamic relative-velocity term below. The actor is independent of the critic (see the two flags at the top); Run B removes the critic confound right here.
+    # dropping the dynamic relative-velocity term below. The actor is independent of the critic (see the two flags at the top); the actor-static ablation removes the critic confound right here.
     if not ACTOR_XCOM_USE_VELOCITY:
         return pos_b  # (N, 2): static CoM position (base frame)
 
