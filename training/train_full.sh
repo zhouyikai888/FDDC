@@ -9,7 +9,7 @@
 set -e
 export OMNI_KIT_ACCEPT_EULA=1
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True   # anti-fragmentation; required at the memory boundary
-# On this box, /sbin/ldconfig -p prints fine but exits 255; triton's check_output for libcuda then throws and torch.compile crashes.
+# On some systems /sbin/ldconfig -p prints fine but exits 255; triton's check_output for libcuda then throws and torch.compile crashes.
 # Set TRITON_LIBCUDA_PATH so triton uses it directly and skips ldconfig (driver.py:libcuda_dirs reads this env first).
 export TRITON_LIBCUDA_PATH=${TRITON_LIBCUDA_PATH:-/usr/lib/x86_64-linux-gnu}
 # GPU selection via CUDA_VISIBLE_DEVICES (default all 8; e.g. 0,1 for 2x RTX 3090, or skip busy GPUs on a shared box)

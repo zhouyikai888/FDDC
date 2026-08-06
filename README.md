@@ -34,7 +34,7 @@ no training/deploy runtime.
 
 | | |
 |---|---|
-| **Policy** | `policy/model_0262000.pt` — the deployed FDDC checkpoint (the benchmark-selected one). |
+| **Policy** | `policy/model_0262000.pt` — the deployed FDDC checkpoint (the benchmark-selected one); the inference actor + observation normalizer, which is all `run_eval.py` needs and reproduces every number here. |
 | **Benchmark** | `eval/` — a self-contained MuJoCo sim2sim harness (`numpy` + `mujoco` + `torch`). |
 | **Motions** | `data/data_stratified_900/` — the 900-clip stratified single-leg set (720 train / 90 val / 90 test). |
 | **Robot** | `robot/g1_29dof/` — the exact Unitree G1 29-DoF MuJoCo plant the policy was validated on. |
