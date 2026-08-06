@@ -35,8 +35,8 @@ The adapters import the shared kernel from `../eval/`, so run them with that on 
 
 ```bash
 cd benchmark/baselines
-PYTHONPATH=../../eval  GMT_REPO=/path/to/GMT  GMT_WEIGHTS=/path/to/pretrained.pt \
-    python gmt_eval.py run  ../../data/data_stratified_900/test  gmt  0 1  ./out
+PYTHONPATH=../../eval  GMT_REPO=/path/to/GMT  GMT_WEIGHTS=$GMT_REPO/assets/pretrained_checkpoints/pretrained.pt \
+    python gmt_eval.py runs  ../../data/data_stratified_900/test  gmt  0 1  ./out    # metrics sub-command = "runs"
 ```
 
 ## Scoring your own policy
