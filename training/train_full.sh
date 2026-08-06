@@ -1,21 +1,22 @@
 #!/usr/bin/env bash
 # Modified from the Holosoma framework (Amazon FAR, Apache-2.0): https://github.com/amazon-far/holosoma
-# FDDC training launcher — 8-GPU FastSAC WBT single-leg-balance training.
+# FDDC training launcher — multi-GPU FastSAC WBT single-leg-balance training.
 # DATA defaults to the released stratified motion set (data_stratified_900/train); override via env.
-# Default matches the paper (Table 6): NUM_ENVS=8192 total = 1024/GPU on 8 GPUs, with the framework's
-# default replay buffer. For higher throughput on more memory, raise NUM_ENVS (e.g. 16384 = 2048/GPU);
-# if memory then gets tight, cap the replay buffer with BUFFER=<n> (adds --algo.config.buffer_size).
+# Default matches the paper (Table 6): NUM_ENVS=8192 total, with the framework's default replay buffer.
+# The total is split across your visible GPUs (NUM_ENVS/NPROC each) — e.g. 1024/GPU on 8x RTX 3080 or
+# 4096/GPU on 2x RTX 3090 (both configurations were used in the paper). For more throughput on more
+# memory, raise NUM_ENVS; if memory then gets tight, cap the replay buffer with BUFFER=<n>.
 set -e
 export OMNI_KIT_ACCEPT_EULA=1
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True   # anti-fragmentation; required at the memory boundary
 # On this box, /sbin/ldconfig -p prints fine but exits 255; triton's check_output for libcuda then throws and torch.compile crashes.
 # Set TRITON_LIBCUDA_PATH so triton uses it directly and skips ldconfig (driver.py:libcuda_dirs reads this env first).
 export TRITON_LIBCUDA_PATH=${TRITON_LIBCUDA_PATH:-/usr/lib/x86_64-linux-gnu}
-# GPU selection: override via CUDA_VISIBLE_DEVICES (on a shared box, avoid GPUs others use, e.g. 0,1,2,3,4,6,7); default all 8
+# GPU selection via CUDA_VISIBLE_DEVICES (default all 8; e.g. 0,1 for 2x RTX 3090, or skip busy GPUs on a shared box)
 export CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-0,1,2,3,4,5,6,7}
 NPROC=$(echo "$CUDA_VISIBLE_DEVICES" | awk -F, '{print NF}')   # num processes = num visible GPUs
 
-NUM_ENVS=${NUM_ENVS:-8192}             # global total (paper Table 6); torchrun splits by /8 = 1024/GPU
+NUM_ENVS=${NUM_ENVS:-8192}             # global total (paper Table 6); split across NPROC GPUs = NUM_ENVS/NPROC each
 BUFFER=${BUFFER:-}                      # empty = framework default replay buffer (paper config); set to cap it
 DATA=${DATA:-/path/to/data_stratified_900/train}   # motion dir = the released FDDC training set; override via env
 

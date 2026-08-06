@@ -51,7 +51,7 @@ recent CUDA GPU box):
 
 **3. Apply the FDDC files** — copy `fddc_src/*` over the same paths in your Holosoma checkout.
 
-**4. Train** (8 GPUs; edit `CUDA_VISIBLE_DEVICES` / `NUM_ENVS` for your box):
+**4. Train** (multi-GPU — the paper used 8x RTX 3080 or 2x RTX 3090; edit `CUDA_VISIBLE_DEVICES` / `NUM_ENVS` for your box):
 
 ```bash
 DATA=/path/to/data_stratified_900/train bash train_full.sh
