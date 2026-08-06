@@ -1,0 +1,26 @@
+Unitree G1 (29-DoF) MuJoCo model — robot/g1_29dof/
+==================================================
+
+The robot description `g1_29dof.xml` and the mesh files in `meshes/` are DERIVED from the Unitree
+Robotics G1 model (`unitree_description/g1`), published by Unitree at
+https://github.com/unitreerobotics/unitree_ros under the **BSD 3-Clause License**.
+
+    Copyright (c) 2016-2022 HangZhou YuShu TECHNOLOGY CO.,LTD. ("Unitree Robotics"). All rights reserved.
+    Licensed under the BSD 3-Clause License.
+
+The full BSD 3-Clause text and Unitree's copyright notice are retained in the `LICENSE` file in this
+directory, as required by the license for redistribution.
+
+Modifications (stated for transparency and BSD-3 redistribution): on top of the upstream Unitree
+description, the Holosoma authors added the `<actuator>` block (Juyue Chen) and adjusted the group of
+some visual geoms for ray-tracing (Younggyo Seo); this attribution is preserved in the header comment
+of `g1_29dof.xml`. Those modifications are part of the Holosoma framework (Amazon FAR), Apache-2.0.
+
+Per BSD 3-Clause: the names "Unitree Robotics" / the contributors are NOT used to endorse or promote
+this project; this redistribution retains the copyright notice, the list of conditions, and the
+disclaimer (see `LICENSE`).
+
+Why this exact file is bundled: it is the precise MuJoCo plant the FDDC policy was validated against
+(7-capsule collision feet, armature, per-joint effort limits). A different G1 MJCF can change the
+foot-ground contact and link inertias — and therefore the benchmark numbers — so we ship this exact
+model rather than a generic one.

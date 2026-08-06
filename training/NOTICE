@@ -1,0 +1,31 @@
+FDDC training reference — training/
+===================================
+
+The files under training/fddc_src/ (and train_full.sh) are MODIFIED from the Holosoma framework:
+
+    Holosoma — Amazon FAR.  https://github.com/amazon-far/holosoma
+    Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+    Licensed under the Apache License, Version 2.0 (full text in the repository LICENSE file).
+
+As required by Apache-2.0 §4(b), we state the changes. Modifications for FDDC (this work):
+
+  - managers/observation/terms/wbt.py
+        added the deployable support-relative dynamic-CoM actor observation
+        (`whole_body_com_rel_support_center`) and the privileged-critic xCoM observation
+        (`whole_body_xcom_rel_support_center`), plus their CoM / capture-point helpers.
+
+  - managers/reward/terms/wbt.py
+        added the human-science balance reward library: capture-point / support-polygon
+        Margin-of-Stability (`_support_polygon_margin`, `_convex_hull_halfspace_margin`),
+        the xCoM computation (`_xcom_xy`) and support determination used by the balance rewards.
+
+  - config_values/wbt/g1/{observation,reward,experiment}.py
+        wired the above into the actor/critic observation groups, the reward weights
+        (paper Table 6), and the FastSAC training hyperparameters (paper Table 6).
+
+  - train_full.sh
+        the multi-GPU FastSAC launch command for the FDDC experiment.
+
+These files are a small, readable SUBSET of Holosoma, provided so the FDDC method is transparent and
+reproducible in principle. They are NOT a redistribution of the full framework — install upstream
+Holosoma (Apache-2.0) to run them; see TRAINING.md.

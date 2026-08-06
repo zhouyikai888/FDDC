@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+
+# Evaluation result dumps (from run_eval.py --out)
+*_all90.json
+results/
+
+# The 900 motion clips are hosted on HuggingFace, NOT in git (see download_data.py / data/README.md).
+# The small metadata (dataset_info.json, manifest.csv, *_list.txt) IS tracked.
+data/data_stratified_900/train/
+data/data_stratified_900/val/
+data/data_stratified_900/test/

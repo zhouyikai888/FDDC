@@ -1,0 +1,10 @@
+# FDDC single-leg-balance benchmark — evaluation dependencies.
+# The policy runs on CPU (numpy); a CPU-only torch build is sufficient.
+# Versions in parentheses are what the release was validated against.
+numpy>=1.24        # (tested 1.26.4)
+mujoco>=3.2        # (tested 3.10.0)
+torch>=2.1         # (tested 2.12.1; used only to load the .pt state_dict — CPU build is fine)
+
+# Optional — only the legacy per-motion-ONNX path (wbt_rollout.WBTPolicy) imports it.
+# run_eval.py scores model_0262000.pt directly from the .pt and does NOT need onnxruntime.
+# onnxruntime>=1.16  # (tested 1.23.2)
