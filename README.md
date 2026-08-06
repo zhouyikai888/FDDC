@@ -6,6 +6,8 @@
 
 ![FDDC holds clean single-leg balance across 90 stratified poses and transfers to a real Unitree G1](assets/fig_teaser.png)
 
+![FDDC on a real Unitree G1 — single-leg balance (mid-squat, high swing)](assets/demo.gif)
+
 Unified humanoid policies track dances, runs, and backflips, yet stumble on a simple demand: staying
 balanced on one leg. FDDC is the first single-leg-balance policy to deploy **directly on a real Unitree
 G1 without teacher–student distillation**. Its key idea is a *deployable* dynamic-CoM observation: the
