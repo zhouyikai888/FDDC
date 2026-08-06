@@ -1,9 +1,12 @@
 # Reproducing the eight baselines (paper Table 1)
 
 Each adapter here is the **exact script used to score that baseline in the paper**. An adapter runs the
-baseline's *own* policy — and, for several, the baseline's *own* observation / sim code — inside our
-shared MuJoCo kernel (`../../eval/wbt_rollout.py`, `../../eval/metrics.py`). Success is judged from the
-robot's true physical state by the same `metrics.py` for every method.
+baseline's *own* policy — and, for **GMT / TWIST / OmniXtreme / Humanoid-GPT**, the baseline's *own*
+observation and MuJoCo sim (its native deployment harness); for **ProtoMotions / MOSAIC / SONIC /
+HoloMotion**, the shared FDDC G1 plant (`../../eval/wbt_rollout.py`). Every method is scored on the
+**same motion set** by the **same outcome metric** (`../../eval/metrics.py`), judged from the robot's
+true physical state — but the physics plant is not byte-identical across all eight (see the plant note
+in [`../README.md`](../README.md)).
 
 We do **not** redistribute third-party code or weights: you obtain each baseline's **repository and
 released weights from its authors** (links below), then point the adapter at them via environment

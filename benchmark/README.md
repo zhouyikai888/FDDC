@@ -1,24 +1,38 @@
 # The FDDC single-leg-balance benchmark — method-agnostic scoring
 
-FDDC's benchmark is **method-agnostic**: every policy is scored inside **one shared MuJoCo kernel** at
-the robot's command interface, under byte-identical conditions, and success is judged from the robot's
-**true physical state** — not from the policy's own reference or reward. This directory documents how
-that works and how the paper's eight baselines were scored (Table 1).
+FDDC's benchmark is **method-agnostic**: every policy is scored on the **same motion set** by the
+**same outcome metric**, judged from the robot's **true physical state** — not from the policy's own
+reference or reward. Where a method's observation and simulator can be cleanly reused, it runs in the
+shared FDDC G1 MuJoCo plant; where they are tightly coupled to the method's own deployment stack, it runs
+in that method's **native MuJoCo deployment harness** (more faithful than force-porting it). This
+directory documents both, and how the paper's eight baselines were scored (Table 1).
 
 ## How it works
 
-Three shared pieces (in `../eval/`) plus a thin per-method adapter:
+**Shared across all methods:**
 
-1. **Shared kernel** — `eval/wbt_rollout.py`: the deploy-faithful MuJoCo G1 plant (`G1Sim`), a 50 Hz PD
-   controller, the motion set, and the seeded observation noise. Every method runs in *this* plant.
-2. **Shared metrics** — `eval/metrics.py`: the outcome tiers (Perfect / Marginal / Failure) and the
-   continuous suite, computed from the robot's true state. Method-agnostic by construction.
-3. **A thin per-method adapter** that (i) assembles *that method's* observation from the shared sim
-   state + the motion reference, (ii) runs its network (ONNX / TorchScript / its own kernel), and
-   (iii) decodes the action to joint-position targets for the shared PD.
+1. **Motion set** — the same 90 held-out single-leg clips (`../data/data_stratified_900/test`).
+2. **Outcome metric** — the Perfect / Marginal / Failure tiers, computed from the robot's **true physical
+   state** (`eval/metrics.py`; the native-harness methods reach the same tiers via `success_metric.py`).
+3. **Protocol** — initialized from the reference's first frame, judged from the true state, sanity-first.
 
-`robot_meta.onnx` (in `baselines/`) is a tiny metadata-only ONNX carrying the Unitree-G1 constants
-(`dof_names`, `kp`, `kd`, `action_scale`, default pose) that the adapters read for the shared PD.
+**Physics plant — shared for some, native for others:**
+
+- **Shared FDDC G1 plant** (`eval/wbt_rollout.py` `G1Sim`, 50 Hz PD): **ProtoMotions, MOSAIC, SONIC,
+  HoloMotion** — their observation/sim reuse the shared kernel.
+- **The method's own upstream MuJoCo** (its model / PD / timestep / sim wrapper): **GMT, TWIST,
+  OmniXtreme, Humanoid-GPT** — their obs/sim are tightly coupled, so we run their native deployment
+  harness rather than force-port them (arguably fairer: each is scored in the sim it was validated on).
+
+So the benchmark guarantees the **same motions + same outcome metric + same true-state judging** for
+every method — it is **not** a byte-identical physics plant for all eight. Each method's **adapter**
+assembles that method's observation, runs its network, and decodes to joint targets; `robot_meta.onnx`
+carries the Unitree-G1 constants the shared-plant methods use for PD.
+
+> **Metric-parity note.** `eval/metrics.py` includes HuB's 0.5 m 12-keypoint tracking gate; the
+> `success_metric.py` used by the native-harness baselines does not compute it. This changes no baseline
+> number — the gate is an anti-gaming check that only binds once a method *sustains* single-leg, and every
+> baseline is 0/90 sustained — but the two success functions are not byte-identical in code.
 
 ## Reproducing the eight baselines (paper Table 1)
 
