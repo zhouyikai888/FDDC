@@ -13,6 +13,9 @@ pip install huggingface_hub
 python download_data.py        # from the repo root -> fills data/data_stratified_900/{train,val,test}/
 ```
 
+**Verify** (optional): `data_stratified_900/SHA256SUMS` lists the SHA-256 of all 900 clips —
+`cd data/data_stratified_900 && sha256sum -c SHA256SUMS`.
+
 - **Split:** 720 train / 90 val / 90 test, balanced across the 9 pose classes and both support sides
   (seed 42). Per-clip class / bin / support / split labels are in `data_stratified_900/dataset_info.json`.
 - **License: GPL-3.0** (`LICENSE`), because these motions are a derivative of the **AMS** synthetic

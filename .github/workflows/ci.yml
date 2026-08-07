@@ -1,0 +1,39 @@
+name: smoke
+
+# Lightweight smoke test: installs the CPU deps, compiles every Python file, exports the actor ONNX and
+# checks it matches the numpy reference (fast_policy.py), and loads the deploy MuJoCo plant. It does NOT
+# download the 900-clip motion set (that lives on HuggingFace) or run the full benchmark.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install CPU dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "numpy>=1.24" "mujoco>=3.2" "onnxruntime>=1.16"
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Compile every tracked Python file
+        run: python -m py_compile $(git ls-files '*.py')
+
+      - name: Export the actor ONNX and verify vs fast_policy.py
+        run: |
+          cd eval
+          python export_onnx.py --out /tmp/actor.onnx
+
+      - name: Load the deploy MuJoCo plant (robot XML + meshes)
+        run: |
+          cd eval
+          WBT_EVAL_ROBOT_XML="$PWD/../robot/g1_29dof/g1_29dof.xml" \
+            python -c "import wbt_rollout as W; m = W._load_deploy_model(); print('deploy model nq =', m.nq); assert m.nq == 36"

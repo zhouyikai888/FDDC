@@ -15,7 +15,10 @@ The runtime consumes a **per-motion ONNX** (`model_<step>_<motion>.onnx`) — th
 `policy/model_0262000.pt` with a specific motion command baked in — run at **50 Hz**. The released
 `policy/model_0262000.pt` is that actor; `eval/fast_policy.py` reproduces it in numpy **bit-exact** with
 the ONNX export and is the executable reference. Robot constants (`dof_names`, `kp`, `kd`, `action_scale`,
-default pose, joint limits) are in `policy/robot_config.json`.
+default pose, joint limits) are in `policy/robot_config.json`. `eval/export_onnx.py` exports that actor
+to a general ONNX (`obs -> actions`) and verifies it against `fast_policy.py` (~3e-5, float32):
+`cd eval && python export_onnx.py`. Baking a *specific motion's* reference into a per-motion ONNX is a
+deploy-side step and is not part of this repository.
 
 ## sim2sim — always validate here before hardware
 
