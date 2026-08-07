@@ -21,7 +21,7 @@ def _seed_all(s=_SEED):
     random.seed(s); np.random.seed(s); torch.manual_seed(s)
 
 PERM = np.array([0,3,6,9,13,17,1,4,7,10,14,18,2,5,8,11,15,19,21,23,25,27,12,16,20,22,24,26,28])
-# my clip 51-body -> omnixtreme 30-body BeyondMimic native order (inverse-solved from GDrive native motions, anchor idx9=torso_link, FK error 0.000m)
+# clip 51-body -> OmniXtreme 30-body (BeyondMimic native order) body remap
 OMNI_IDX = [1,3,15,27,4,16,28,5,17,29,6,18,31,41,8,20,32,42,9,21,33,43,34,44,35,45,36,46,37,47]
 
 # ---- stub viewer / visual to make it headless ----

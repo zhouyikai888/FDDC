@@ -289,10 +289,8 @@ def _xcom_xy(
 ) -> torch.Tensor:
     """Extrapolated CoM (Hof / LIP): xcom_xy = com_xy + com_vel_xy / omega, omega = sqrt(g / h).
 
-    use_velocity=False -> degenerates to the static geometric CoM (com_xy only), for the dynamic/static-CoM ablation.
-    The dynamic/static switch was split from a single XCOM_USE_VELOCITY into two independent actor/critic flags
-    (see observation/terms/wbt.py:ACTOR_XCOM_USE_VELOCITY / CRITIC_XCOM_USE_VELOCITY).
-    - polygon / xcom_ttb rewards: use this function's default use_velocity=True (always dynamic; both are =0 in the headline, so no effect);
+    use_velocity=False -> degenerates to the static geometric CoM (com_xy only).
+    - polygon / xcom_ttb rewards: use this function's default use_velocity=True (always dynamic);
     - critic obs whole_body_xcom_rel_support_center: passes use_velocity=CRITIC_XCOM_USE_VELOCITY explicitly;
     - actor obs whole_body_com_rel_support_center: does not use this function; it reads ACTOR_XCOM_USE_VELOCITY in its own func.
     """
@@ -577,8 +575,8 @@ class StanceKneeActionRatePenalty(StanceAnkleActionRatePenalty):
 
     Structurally identical to StanceAnkleActionRatePenalty (single-support gating + per-joint action-rate
     on the stance foot), just applied to the knee joint(s) supplied via config. Separate subclass only for
-    a clear per-term name in configs/logs; it inherits the proven ankle implementation verbatim. KungFu-
-    style ankle > knee weighting is intended, so keep this term's weight below the ankle term's (-0.3).
+    a clear per-term name in configs/logs; it inherits the ankle implementation verbatim. Ankle-over-knee
+    weighting is intended, so keep this term's weight below the ankle term's (-0.3).
     """
 
 
@@ -586,7 +584,7 @@ class ActionJerkPenalty(RewardTermBase):
     """Penalize the second difference of actions (action "jerk"): (a_t - a_{t-1}) - (a_{t-1} - a_{t-2}).
 
     Complements action_rate. action_rate (first difference) penalizes ALL action change, so a heavier
-    weight over-smooths and hurts tracking of dynamic motion (proven: action_rate -1.5 regressed). Jerk
+    weight over-smooths and hurts tracking of dynamic motion. Jerk
     (second difference) is ~0 for smooth motion of ANY speed and only spikes on high-frequency reversals
     -- it targets the foot-chatter failure mode directly, without the over-regularization of a heavier
     action_rate. Global: all action dims, every step.

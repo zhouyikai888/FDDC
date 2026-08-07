@@ -137,22 +137,18 @@ g1_29dof_wbt_fast_sac_reward = RewardManagerCfg(
         **g1_29dof_wbt_reward.terms,
         "action_rate_l2": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:penalty_action_rate",
-            weight=-1.0,  # anti-flail comes from convergence/stability, not a heavier action-rate
+            weight=-1.0,
         ),
-        # Action jerk (2nd difference of actions). Surgical anti-chatter: ~0 for smooth motion of any
-        # speed, only bites on high-frequency reversals -> targets foot-chatter WITHOUT the over-smoothing
-        # a heavier action_rate causes. Measured: jerk raw ~1.28x action_rate, so at
-        # -0.1 the per-step contribution ~-0.167 = 13% of action_rate (-1.304) -- a light targeted nudge
-        # below the over-smoothing zone (action_rate -1.5 = +50% regressed). Tune by 500-eval.
-        # Impl: ActionJerkPenalty in managers/reward/terms/wbt.py.
+        # Action jerk (2nd difference of actions): ~0 for smooth motion of any speed, penalizing only
+        # high-frequency reversals -> targets foot-chatter without the over-smoothing a heavier
+        # action_rate causes. Impl: ActionJerkPenalty in managers/reward/terms/wbt.py.
         "action_jerk": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:ActionJerkPenalty",
             weight=-0.1,
         ),
         # Stance-leg KNEE action-rate, single-support gated -- mirrors stance_ankle_action_rate on the
         # knee. Reuses the generic stance-joint action-rate impl via a thin StanceKneeActionRatePenalty
-        # subclass. KungFu uses ankle > knee, so weight kept below the ankle's -0.3. -0.1 to start; the
-        # knee is 1 joint & moves less than the ankle in single-leg, so expect a small contribution.
+        # subclass; the weight is kept below the ankle term's (-0.3).
         "stance_knee_action_rate": RewardTermCfg(
             func="holosoma.managers.reward.terms.wbt:StanceKneeActionRatePenalty",
             params={

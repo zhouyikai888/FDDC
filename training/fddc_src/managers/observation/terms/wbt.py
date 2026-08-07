@@ -191,11 +191,11 @@ def future_cmd(env: WholeBodyTrackingManager, num_future_frames: int = 10) -> to
     return torch.cat(frames, dim=-1)
 
 
-# [Ablation switch] dynamic vs static CoM: actor and critic independently control whether to use the velocity-extrapolation term (dynamic xCoM).
-# True = dynamic (xCoM = CoM + velocity extrapolation, capture-point/LIP, baseline); False = static (pure geometric CoM, drops velocity).
-# Why decouple: to isolate the core novelty -- headline (actor+critic both dynamic) vs the actor-static / critic-dynamic ablation, which differs only at the actor,
-# removing the critic (privileged, not deployed) confound, directly proving the dynamic part of the deployable actor observation is what matters.
-# Note: the polygon / xcom_ttb rewards are not controlled by these flags (they use _xcom_xy with default use_velocity=True, always dynamic; both are =0 in the headline anyway).
+# Dynamic vs static CoM: the actor and critic independently control whether the xCoM uses the
+# velocity-extrapolation term. True = dynamic (xCoM = CoM + velocity extrapolation, capture-point/LIP);
+# False = static (pure geometric CoM, drops the velocity term). The two flags are independent, so the
+# actor observation can be varied without changing the critic. (The polygon / xcom_ttb rewards are not
+# controlled by these flags -- they always use the dynamic term.)
 ACTOR_XCOM_USE_VELOCITY = True   # controls the actor whole_body_com_rel_support_center (deployable); False -> return position only (N,2)
 CRITIC_XCOM_USE_VELOCITY = True  # controls the critic whole_body_xcom_rel_support_center (privileged / training-only)
 
@@ -284,8 +284,8 @@ def whole_body_com_rel_support_center(
     rel_pos_w[:, :2] = com_pos[:, :2] - center_pos
     pos_b = quat_rotate_inverse(_base_quat(env), rel_pos_w, w_last=True)[:, :2]
 
-    # [Ablation switch] static-CoM position observation: ACTOR_XCOM_USE_VELOCITY=False -> keep only the CoM-rel-support position (N,2),
-    # dropping the dynamic relative-velocity term below. The actor is independent of the critic (see the two flags at the top); the actor-static ablation removes the critic confound right here.
+    # ACTOR_XCOM_USE_VELOCITY=False -> return only the CoM-rel-support position (N,2), dropping the
+    # dynamic relative-velocity term below.
     if not ACTOR_XCOM_USE_VELOCITY:
         return pos_b  # (N, 2): static CoM position (base frame)
 

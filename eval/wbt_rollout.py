@@ -36,21 +36,18 @@ ROBOT_XML = os.environ.get(
 MOTION_DIR = os.environ.get(
     "WBT_EVAL_MOTION_DIR", os.path.join(_PKG, "data", "data_stratified_900", "test"))
 CONTROL_HZ = 50.0
-SIM_DT = 0.0005  # 2000 Hz physics — MATCHES the deploy run_sim mujoco (config_values/run_sim.py fps=2000,
-                 # verified in deploy0707 too); Euler integrator (deploy default). Was 200 Hz, but the deploy
-                 # actually runs mujoco at 2000 Hz, so the 1-physics-step dof_vel delay is 0.5 ms, not 5 ms.
+SIM_DT = 0.0005  # 2000 Hz physics (Euler integrator), matching the deploy runtime; the 1-physics-step
+                 # dof_vel delay is therefore 0.5 ms.
 SUBSTEPS = 40    # 40 physics steps / control step -> policy at 50 Hz (2000/40); PD recomputed each physics
                  # step like the deploy (compute_torques runs every physics step). dof_vel_delay=1 = 1 physics
                  # step = 0.5 ms (deploy SIM2SIM_DOF_VEL_DELAY_STEPS=1 @ 2000 Hz).
 
-# Deploy run_policy obs/command details, replicated for 1:1 consistency with the deployed controller
-# (holosoma_inference policies/wbt.py + base.py):
-WBT_WAIST_LPF_ALPHA = 0.5   # EMA on the 3 waist joints before the torso-orientation FK (deploy WBT_WAIST_LPF_ALPHA)
+# Deploy observation/command details, replicated for 1:1 consistency with the deployed controller:
+WBT_WAIST_LPF_ALPHA = 0.5   # EMA on the 3 waist joints before the torso-orientation FK
 OBS_CLIP = 100.0            # raw-obs clip before the ONNX (deploy clip_observations=100)
 ACTION_CLIP = 100.0        # policy-action clip before scaling (deploy)
-WBT_ENABLE_TARGET_CLAMP = False   # script-layer q_target joint-limit clamp; DEFAULT OFF to match the
-                                  # deploy (base.py WBT_ENABLE_TARGET_CLAMP) and the reference deploys
-                                  # (which don't script-clamp; physics range + torque saturation bound it)
+WBT_ENABLE_TARGET_CLAMP = False   # script-layer q_target joint-limit clamp; OFF to match the deploy
+                                  # (which does not script-clamp; physics range + torque saturation bound it)
 
 # ---------------------------------------------------------------------------------------------------
 # quaternion helpers (numpy, w_last=xyzw unless noted). Mirror holosoma.utils.rotations semantics.
@@ -166,7 +163,7 @@ def _load_deploy_model() -> "mujoco.MjModel":
     geom<->geom MIXING between the foot capsules and a ground plane carrying the scene_manager params
     (solref=[0.001,1], friction=[0.7,0.005,0.001], solimp=[0.99,0.99,0.01,0.5,2]). MuJoCo averages the
     plane's solref (0.001) with the foot geoms' default (0.02) -> effective foot-floor solref = 0.0105,
-    friction = max(1.0, 0.7) = 1.0 (VERIFIED == the deploy's compiled contact). So we:
+    friction = max(1.0, 0.7) = 1.0 (matching the deploy's compiled contact). So we:
       (a) DROP the XML's explicit foot<->floor <pair> block (14 pairs, no <exclude>s) -- these carry
           Holosoma's solref="0.01 1" friction="0.8 0.8" and break under the deploy MjSpec attach-prefix
           (above), so keeping them would not reproduce the deploy's geom-mix (0.0105 / 1.0); and
@@ -525,7 +522,7 @@ def load_motion_npz(motion_id: str):
 
 class NpzMotionReference:
     """Serves the motion-reference obs terms straight from the motion npz, byte-for-byte reproducing the
-    baked-ONNX reference branch (verified to reproduce it): joint_pos = npz joints[t];
+    baked-ONNX reference branch: joint_pos = npz joints[t];
     joint_vel = npz joint_vel[t][6:35]; ref_quat_xyzw = torso_link quat (wxyz->xyzw); reference_support_phase
     = npz reference_support_phase[t]; future (5 frames t+1..t+5, clamped to the last frame at the end) drives
     future_cmd (joint_pos+joint_vel per frame, 5*58=290) and future_support_phase (5*2=10). Lets ONE policy

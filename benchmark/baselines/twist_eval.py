@@ -34,7 +34,7 @@ TLIM = np.array([88,139,88,139,50,50, 88,139,88,139,50,50, 88,50,50, 25,25,25,25
 ANKLE_IDX = [4, 5, 10, 11]  # 23-frame
 ACTION_SCALE = 0.5
 
-# my 29-dof order (= g1.xml/URDF order, repeatedly confirmed)
+# the 29-dof order (= g1.xml/URDF order)
 _MINE29 = ["left_hip_pitch","left_hip_roll","left_hip_yaw","left_knee","left_ankle_pitch","left_ankle_roll",
            "right_hip_pitch","right_hip_roll","right_hip_yaw","right_knee","right_ankle_pitch","right_ankle_roll",
            "waist_yaw","waist_roll","waist_pitch",

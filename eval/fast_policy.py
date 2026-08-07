@@ -1,5 +1,5 @@
 """Run the FDDC actor directly from a .pt (numpy) — no IsaacSim, no ONNX. Bit-exact with the IsaacSim
-ONNX export (verified to ~2e-7). The robot config (dof_names / kp / kd / PD action_scale / default pose /
+ONNX export. The robot config (dof_names / kp / kd / PD action_scale / default pose /
 joint limits) is read from a static robot_config.json — these are Unitree-G1 constants, identical across
 every training run — so the ONLY per-policy artifact needed is the .pt."""
 import json, numpy as np, torch
@@ -29,8 +29,8 @@ class FastPolicy:
         d = torch.load(pt_path, map_location="cpu", weights_only=False)
         sd = d["actor_state_dict"]; norm = d["obs_normalizer_state"]
         f = lambda x: x.detach().cpu().numpy().astype(np.float64)
-        # normalization divisor = std + 0.01 (training RunningMeanStd eps; raw std divides-by-zero on the
-        # ~36 constant dims -> NaN). Verified == the IsaacSim ONNX onnx::Div to ~2e-7.
+        # normalization divisor = std + 0.01 (RunningMeanStd eps; the raw std is 0 on the constant dims,
+        # which would otherwise divide-by-zero -> NaN).
         self._mean = f(norm["_mean"]); self._std = f(norm["_std"]) + 0.01
         self._W = [f(sd[f"net.{i}.weight"]) for i in (0, 3, 6)]
         self._b = [f(sd[f"net.{i}.bias"]) for i in (0, 3, 6)]
@@ -39,7 +39,7 @@ class FastPolicy:
         self._muW = f(sd["fc_mu.0.weight"]); self._mub = f(sd["fc_mu.0.bias"])
         self._as = f(sd["action_scale"]); self._ab = f(sd["action_bias"])  # network tanh-squash bounds
         self.obs_dim = self._W[0].shape[1]
-        # robot constants from the static json (was: reverse-read from a reference ONNX's metadata)
+        # robot constants from the static json
         cfg = robot_config if isinstance(robot_config, dict) else json.load(open(robot_config))
         self.dof_names = list(cfg["dof_names"]); self.num_dofs = len(self.dof_names)
         self.kp = np.asarray(cfg["kp"], dtype=np.float64)
