@@ -387,21 +387,21 @@ Changed group of some visual geoms to support ray-tracing that passes through ro
 
     <contact>
         <!-- left foot - floor -->
-        <pair name="left_foot1_floor" geom1="left_foot1_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
-        <pair name="left_foot2_floor" geom1="left_foot2_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
-        <pair name="left_foot3_floor" geom1="left_foot3_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
-        <pair name="left_foot4_floor" geom1="left_foot4_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
-        <pair name="left_foot5_floor" geom1="left_foot5_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
-        <pair name="left_foot6_floor" geom1="left_foot6_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
-        <pair name="left_foot7_floor" geom1="left_foot7_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
+        <pair name="left_foot1_floor" geom1="left_foot1_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
+        <pair name="left_foot2_floor" geom1="left_foot2_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
+        <pair name="left_foot3_floor" geom1="left_foot3_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
+        <pair name="left_foot4_floor" geom1="left_foot4_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
+        <pair name="left_foot5_floor" geom1="left_foot5_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
+        <pair name="left_foot6_floor" geom1="left_foot6_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
+        <pair name="left_foot7_floor" geom1="left_foot7_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
         <!-- right foot - floor -->
-        <pair name="right_foot1_floor" geom1="right_foot1_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
-        <pair name="right_foot2_floor" geom1="right_foot2_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
-        <pair name="right_foot3_floor" geom1="right_foot3_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
-        <pair name="right_foot4_floor" geom1="right_foot4_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
-        <pair name="right_foot5_floor" geom1="right_foot5_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
-        <pair name="right_foot6_floor" geom1="right_foot6_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
-        <pair name="right_foot7_floor" geom1="right_foot7_collision" geom2="floor" solref="0.02 1" friction="1 1"/>
+        <pair name="right_foot1_floor" geom1="right_foot1_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
+        <pair name="right_foot2_floor" geom1="right_foot2_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
+        <pair name="right_foot3_floor" geom1="right_foot3_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
+        <pair name="right_foot4_floor" geom1="right_foot4_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
+        <pair name="right_foot5_floor" geom1="right_foot5_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
+        <pair name="right_foot6_floor" geom1="right_foot6_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
+        <pair name="right_foot7_floor" geom1="right_foot7_collision" geom2="floor" solref="0.01 1" friction="0.8 0.8"/>
     </contact>
 
     <tendon>

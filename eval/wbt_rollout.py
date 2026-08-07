@@ -20,7 +20,7 @@ import numpy as np
 # entry point run_eval.py scores model_0262000.pt via FastPolicy and needs only numpy / mujoco / torch.
 
 # The deploy sim2sim MuJoCo model. 7 capsule collision geoms per foot paired ONLY with the floor
-# (solref="0.02 1"), proper armature + per-joint effort limits, and default contype/conaffinity=0 (no
+# (solref="0.01 1"), proper armature + per-joint effort limits, and default contype/conaffinity=0 (no
 # self-collision -> only the explicit foot<->floor pairs generate contact). This is the exact plant the
 # policy was validated against; the retargeting `g1_29dof_spherehand.xml` is a DIFFERENT model (sphere
 # feet, no armature) on which even a good policy falls. The XML references a geom named "floor" that it
@@ -167,8 +167,9 @@ def _load_deploy_model() -> "mujoco.MjModel":
     (solref=[0.001,1], friction=[0.7,0.005,0.001], solimp=[0.99,0.99,0.01,0.5,2]). MuJoCo averages the
     plane's solref (0.001) with the foot geoms' default (0.02) -> effective foot-floor solref = 0.0105,
     friction = max(1.0, 0.7) = 1.0 (VERIFIED == the deploy's compiled contact). So we:
-      (a) DROP the XML's explicit foot<->floor <pair> block (14 pairs, no <exclude>s) -- keeping it would
-          pin solref to 0.02, ~2x softer than the deploy; and
+      (a) DROP the XML's explicit foot<->floor <pair> block (14 pairs, no <exclude>s) -- these carry
+          Holosoma's solref="0.01 1" friction="0.8 0.8" and break under the deploy MjSpec attach-prefix
+          (above), so keeping them would not reproduce the deploy's geom-mix (0.0105 / 1.0); and
       (b) inject the ground plane with the scene_manager params (not the old friction="1 1 1"/default 0.02).
     Patch as text -> from_xml_string so nothing outside evaluation/ is written and meshes resolve by CWD."""
     meshes = os.path.dirname(ROBOT_XML) + "/meshes/"
