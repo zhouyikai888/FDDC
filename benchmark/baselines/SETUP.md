@@ -33,12 +33,13 @@ DATA="$(pwd)/../../data/data_stratified_900/test"   # the 90 held-out test clips
   installed with its requirements** (each was run in its own conda env to avoid dependency clashes) —
   plus `mujoco_viewer` (GMT, OmniXtreme) or `warp-lang` (HoloMotion).
 - **Device.** The eval runs on **CPU** (the shared MuJoCo kernel is CPU). If a repo-based baseline's own
-  deploy code auto-selects CUDA and ends up mixing CPU/GPU tensors, run it CPU-only by prefixing
-  `CUDA_VISIBLE_DEVICES=""` — **required for OmniXtreme** (see its note below).
-- **Sanity first.** Every adapter has a `sanity` sub-command that tracks a normal motion and reports
-  whether the wiring is correct (low tracking error, no fall). Run `python <baseline>_eval.py sanity`
-  and confirm it tracks before trusting the single-leg number (paper §4.2 — a method that fails sanity
-  is a wiring bug, not a real failure).
+  deploy code auto-selects CUDA and ends up mixing CPU/GPU tensors, run it CPU-only by exporting
+  `CUDA_VISIBLE_DEVICES=""` (OmniXtreme sets this itself on startup — see its note below).
+- **Sanity first.** Every adapter has a `sanity` sub-command that reports whether the wiring is correct —
+  it tracks a normal motion (or, for ProtoMotions, which has no bundled normal clip, the opening
+  double-support phase of a few test clips) without an immediate fall. Run `python <baseline>_eval.py sanity`
+  and confirm it passes before trusting the single-leg number (paper §4.2 — a method that fails sanity is
+  a wiring bug, not a real failure).
 - **The metrics run** writes a per-motion JSON (`{tag}__sh{shard}.json` etc.) with `success` / `fell`
   per clip. Aggregate them (below) into Perfect / Marginal / Failure.
 

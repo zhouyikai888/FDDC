@@ -1,12 +1,18 @@
 """Score protomotions on the single-foot balance benchmark: replicate run_rollout logging, actions via protomotions adapter, same 0.20 dof_vel noise condition.
-Usage: python proto_eval.py <motion_dir> <tag> <shard> <nsh> <K> <outdir>"""
+Usage:
+  python proto_eval.py <motion_dir> <tag> <shard> <nsh> <K> <outdir>
+  python proto_eval.py sanity                        # wiring check on a few released test clips (still needs PROTO_ONNX)"""
 import os, sys, json, glob, re, time, numpy as np, onnxruntime as ort, onnx
 from onnx import numpy_helper
 os.environ.setdefault("WBT_ORT_THREADS", "1")
 _ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))  # FDDC release repo root
 HS = _ROOT
 os.environ["WBT_EVAL_ROBOT_XML"] = os.path.join(HS, "robot", "g1_29dof", "g1_29dof.xml")
-motion_dir, tag, shard, nsh, K, outdir = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]), sys.argv[6]
+_SANITY = len(sys.argv) > 1 and sys.argv[1] == "sanity"
+if _SANITY:
+    motion_dir = os.path.join(HS, "data", "data_stratified_900", "test")   # sanity runs on the released test clips
+else:
+    motion_dir, tag, shard, nsh, K, outdir = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]), sys.argv[6]
 os.environ["WBT_EVAL_MOTION_DIR"] = motion_dir
 sys.path.insert(0, os.path.join(HS, "eval"))
 import wbt_rollout as W, metrics as M
@@ -92,6 +98,25 @@ def rollout(motion_id, seed, dof_vel_noise=float(os.environ.get("PROTO_NOISE","0
     ol["ref_support_state"] = ref["ref_support_state"][:T]; ol["nominal_h"] = nominal_h
     ol["motion_id"] = motion_id; ol["seed"] = seed; ol["dt"] = 1.0 / W.CONTROL_HZ; ol["body_mass_total"] = sim.total_mass
     return ol
+
+if _SANITY:
+    # Wiring check: with observation noise off, a correctly wired policy tracks the opening
+    # (double-support) phase of a clip without an immediate fall. A generalist is still not
+    # expected to hold the single-leg phase itself -- that is the benchmark, not this check.
+    _mots = sorted(re.sub(r"^sample_|_mj\.npz$", "", os.path.basename(p)) for p in glob.glob(motion_dir + "/sample_*_mj.npz"))
+    _mids = _mots[::max(1, len(_mots) // 4)][:4]
+    print("=== ProtoMotions sanity (wiring: no immediate fall on the opening phase) ===")
+    _ok = 0
+    for _mid in _mids:
+        _fell = np.asarray(rollout(_mid, 0, dof_vel_noise=0.0, dof_vel_delay=0)["fell"])
+        _ff = int(np.argmax(_fell)) if bool(_fell.any()) else len(_fell)
+        _early = _ff < 25   # fell within ~0.5 s -> wiring bug
+        print(f"  {_mid}: {'fell@' + str(_ff) if bool(_fell.any()) else 'stood full'}/{len(_fell)}  "
+              f"{'<- immediate fall (wiring?)' if _early else 'opening tracked'}")
+        _ok += (not _early)
+    print(f"-> {_ok}/{len(_mids)} tracked the opening without an immediate fall = wiring OK "
+          f"(a clean single-leg hold is the benchmark, not this check)")
+    sys.exit(0)
 
 of = f"{outdir}/{tag}__sh{shard}.json"
 if os.path.exists(of): print(f"[skip]{of}"); sys.exit(0)
