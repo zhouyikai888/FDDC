@@ -59,7 +59,7 @@ Humanoid-GPT / MOSAIC / SONIC use `runs`; HoloMotion uses `runm`. Confirm the ou
 | **SONIC** (weights only) | [NVlabs/GR00T-WholeBodyControl](https://github.com/NVlabs/GR00T-WholeBodyControl), HF [nvidia/GEAR-SONIC](https://huggingface.co/nvidia/GEAR-SONIC) → the **root** `model_encoder.onnx` (obs **1762**) + `model_decoder.onnx` (obs 994). **NOT** the `low_latency/` variant (1247-dim) — this adapter matches the root model. | `SONIC_DIR` (dir with both root ONNX) | `python sonic_eval.py runs "$DATA" sonic 0 1 ./out_sonic` |
 | **GMT** (repo) | [zixuan417/humanoid-general-motion-tracking](https://github.com/zixuan417/humanoid-general-motion-tracking); weights `assets/pretrained_checkpoints/pretrained.pt` in-repo. Needs `mujoco_viewer`. | `GMT_REPO`, `GMT_WEIGHTS` | `python gmt_eval.py runs "$DATA" gmt 0 1 ./out_gmt` |
 | **TWIST** (repo) | [YanjieZe/TWIST](https://github.com/YanjieZe/TWIST) → `twist_general_motion_tracker.pt` (TorchScript); adapter reads `$TWIST_REPO/assets/g1/g1_sim2sim_with_wrist_roll.xml`. | `TWIST_REPO`, `TWIST_WEIGHTS` | `python twist_eval.py runs "$DATA" twist 0 1 ./out_twist` |
-| **OmniXtreme** (repo) | [Perkins729/OmniXtreme](https://github.com/Perkins729/OmniXtreme) → `policy/{base_policy_trt,residual_policy,fk_trt}.onnx`; runs its `deploy_mujoco.DeployNode`. Needs `mujoco`. **Run CPU-only** (see note). | `OMNI_REPO`, `OMNI_DIR` (=`$OMNI_REPO/policy`) | `CUDA_VISIBLE_DEVICES="" python omni_eval.py runs "$DATA" omni 0 1 ./out_omni` |
+| **OmniXtreme** (repo) | [Perkins729/OmniXtreme](https://github.com/Perkins729/OmniXtreme) → `policy/{base_policy_trt,residual_policy,fk_trt}.onnx`; runs its `deploy_mujoco.DeployNode`. Needs `mujoco`. **Runs CPU-only automatically** (see note). | `OMNI_REPO`, `OMNI_DIR` (=`$OMNI_REPO/policy`) | `python omni_eval.py runs "$DATA" omni 0 1 ./out_omni` |
 | **Humanoid-GPT** (repo) | [GalaxyGeneralRobotics/Humanoid-GPT](https://github.com/GalaxyGeneralRobotics/Humanoid-GPT) → `pns_wo_priv216.onnx`; runs its `tracking` module (`G1TrackMjSim`). **The adapter `chdir`s into `$HUMANOID_GPT_REPO` itself and is upstream-version-tolerant — see note.** | `HUMANOID_GPT_REPO`, `HGPT_ONNX` | `python hgpt_eval.py runs "$DATA" hgpt 0 1 ./out_hgpt` |
 | **HoloMotion** (repo) | [HorizonRobotics/HoloMotion](https://github.com/HorizonRobotics/HoloMotion), HF [HorizonRobotics/HoloMotion_models](https://huggingface.co/HorizonRobotics/HoloMotion_models) → `model_14000.onnx`; uses its warp obs kernel. Needs `warp-lang`. | `HOLO_REPO`, `HOLO_ONNX` | `python holo_eval.py runm "$DATA" holo 0 1 ./out_holo` |
 
@@ -67,9 +67,10 @@ Humanoid-GPT / MOSAIC / SONIC use `runs`; HoloMotion uses `runm`. Confirm the ou
 > is 1762-dim), whose SHA256 matches the file used in the paper; the `low_latency/` subfolder is a
 > different 1247-dim model that this adapter does **not** match. Point `SONIC_DIR` at the root files.
 
-> **OmniXtreme gotcha:** run it **CPU-only** — prefix with `CUDA_VISIBLE_DEVICES=""`. With CUDA visible,
-> its deploy code places some tensors on the GPU while the shared kernel stays on CPU, causing a CPU/CUDA
-> tensor mismatch that errors on all 90 clips. Hiding CUDA reproduces the paper's 0.0 / 5.6 / 94.4.
+> **OmniXtreme:** it runs **CPU-only**. Its deploy code auto-selects CUDA and would place some tensors on
+> the GPU while the shared kernel stays on CPU — a mismatch that errors on all 90 clips. The adapter now
+> sets `CUDA_VISIBLE_DEVICES=""` itself on startup (before any torch/deploy import; export it yourself to
+> override), so no manual prefix is needed and it reproduces the paper's 0.0 / 5.6 / 94.4.
 
 > **Humanoid-GPT** (targets the Humanoid-GPT version used in the paper). The adapter now **self-handles**
 > the two upstream quirks below, so no manual `cd` or source edit is needed — you only set
