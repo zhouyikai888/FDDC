@@ -4,6 +4,9 @@
 
 **A unified policy and a method-agnostic sim2sim benchmark for humanoid single-leg balance.**
 
+**Yikai Zhou, Xingyun Wang, Jieming Cui, Bozhou Chen, Yikai Fan, Yixin Zhu\*, Wenxin Li\***<br>
+[Peking University](https://www.pku.edu.cn/) &nbsp;·&nbsp; <sup>\*</sup>Corresponding authors (`yixin.zhu@pku.edu.cn`, `lwx@pku.edu.cn`)
+
 📄 Paper: [arXiv:2608.00500](https://arxiv.org/abs/2608.00500) &nbsp;·&nbsp; 📺 Video: [YouTube](https://www.youtube.com/watch?v=ue3DhT5B3mU)
 
 ![FDDC holds clean single-leg balance across 90 stratified poses and transfers to a real Unitree G1](assets/fig_teaser.png)
