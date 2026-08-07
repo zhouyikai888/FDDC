@@ -100,7 +100,7 @@ Thread caps for parallel/background runs: `WBT_ORT_THREADS=1 OMP_NUM_THREADS=1 p
 
 ## Expected results (held-out test set, n = 90)
 
-The deployed checkpoint reproduces the paper's Table 1 / Table 8 **exactly** from the `.pt`:
+The deployed checkpoint reproduces the paper's Table 1 (clean) / Table 2 (noisy) **exactly** from the `.pt`:
 
 | condition | Perfect | Marginal | Failure |
 |-----------|:-------:|:--------:|:-------:|
