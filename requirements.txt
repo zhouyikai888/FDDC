@@ -5,6 +5,7 @@ numpy>=1.24        # (tested 1.26.4)
 mujoco>=3.2        # (tested 3.10.0)
 torch>=2.1         # (tested 2.12.1; used only to load the .pt state_dict — CPU build is fine)
 
-# Optional — only the legacy per-motion-ONNX path (wbt_rollout.WBTPolicy) imports it.
-# run_eval.py scores model_0262000.pt directly from the .pt and does NOT need onnxruntime.
+# onnxruntime is NOT needed for the headline benchmark: run_eval.py scores model_0262000.pt directly
+# from the .pt (via fast_policy.py). It IS needed to reproduce the 8 baselines (benchmark/baselines/),
+# which run ONNX policies — install it (and each baseline's own deps) per benchmark/baselines/SETUP.md:
 # onnxruntime>=1.16  # (tested 1.23.2)
