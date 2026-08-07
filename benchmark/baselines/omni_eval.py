@@ -6,9 +6,19 @@ import os, sys, glob, re, json, time, pickle
 import numpy as np
 os.environ.setdefault("MUJOCO_GL", "egl")
 os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")   # run CPU-only: its deploy auto-selects CUDA and would mix GPU tensors with the shared CPU kernel (errors on all 90); export CUDA_VISIBLE_DEVICES yourself to override. Must precede any torch/deploy import.
+os.environ.setdefault("OMNI_CLEAN", "1")            # clean condition by default: zero the upstream obs noise (noise_scales) + action delay (paper "clean, no observation noise"). Set OMNI_CLEAN=0 to run the upstream noisy config.
 _ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))  # FDDC release repo root
 REPO = os.environ["OMNI_REPO"]; sys.path.insert(0, REPO); os.chdir(REPO)
-import mujoco
+import mujoco, torch, random
+torch.set_num_threads(1)   # single-thread -> deterministic + don't saturate cores
+
+_SEED = int(os.environ.get("OMNI_SEED", "0"))
+def _seed_all(s=_SEED):
+    """Fix Python/NumPy/PyTorch RNG so the upstream policy's initial_noise (torch.randn, deploy_mujoco.py)
+    and any residual sampling are reproducible. OmniXtreme is a flow policy that REQUIRES an initial-noise
+    input, so 'deterministic' means a FIXED (seeded) noise sample, not a zeroed one; we reseed identically
+    per clip so each clip's result is independent of run order."""
+    random.seed(s); np.random.seed(s); torch.manual_seed(s)
 
 PERM = np.array([0,3,6,9,13,17,1,4,7,10,14,18,2,5,8,11,15,19,21,23,25,27,12,16,20,22,24,26,28])
 # my clip 51-body -> omnixtreme 30-body BeyondMimic native order (inverse-solved from GDrive native motions, anchor idx9=torso_link, FK error 0.000m)
@@ -91,9 +101,10 @@ def run_one(motion_npz):
     """Write policy/motion.npz, instantiate DeployNode, run main_loop, return recorded qpos (T,nq)."""
     import shutil
     shutil.copy(motion_npz, f"{REPO}/policy/motion.npz")
+    _seed_all()                                      # reseed per clip -> initial_noise + sampling reproducible
     _REC["on"] = False; _REC["qpos"] = []; _REC["fz"] = []; _REC["qvel"] = []
     node = D.DeployNode()
-    if os.environ.get("OMNI_CLEAN"):                 # force clean: zero obs noise + action delay
+    if os.environ.get("OMNI_CLEAN", "1") != "0":     # clean (default): zero obs noise + action delay; OMNI_CLEAN=0 -> upstream noisy config
         try:
             for _k in list(node.config.noise_scales.keys()): node.config.noise_scales[_k] = 0.0
         except Exception: pass

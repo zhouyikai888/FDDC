@@ -68,10 +68,15 @@ Humanoid-GPT / MOSAIC / SONIC use `runs`; HoloMotion uses `runm`. Confirm the ou
 > is 1762-dim), whose SHA256 matches the file used in the paper; the `low_latency/` subfolder is a
 > different 1247-dim model that this adapter does **not** match. Point `SONIC_DIR` at the root files.
 
-> **OmniXtreme:** it runs **CPU-only**. Its deploy code auto-selects CUDA and would place some tensors on
-> the GPU while the shared kernel stays on CPU — a mismatch that errors on all 90 clips. The adapter now
-> sets `CUDA_VISIBLE_DEVICES=""` itself on startup (before any torch/deploy import; export it yourself to
-> override), so no manual prefix is needed and it reproduces the paper's 0.0 / 5.6 / 94.4.
+> **OmniXtreme:** it runs **CPU-only** and **deterministically**. (i) Its deploy auto-selects CUDA and
+> would place some tensors on the GPU while the shared kernel stays on CPU — a mismatch that errors on all
+> 90 clips — so the adapter sets `CUDA_VISIBLE_DEVICES=""` itself on startup (before any torch/deploy
+> import; export it yourself to override). (ii) Its policy is a flow model that samples an `initial_noise`
+> (`torch.randn`) every run, and its observations carry upstream noise (`noise_scales`, e.g.
+> `base_ang_vel=0.1`); the shipped adapter reseeds Python/NumPy/PyTorch per clip, runs single-threaded, and
+> defaults `OMNI_CLEAN=1` (zeros the obs noise + action delay for the paper's clean condition), so a run is
+> bit-reproducible. This reproduces the paper's **0.0 / 5.6 / 94.4** (verified deterministically here). Set
+> `OMNI_CLEAN=0` for the upstream noisy config, or `OMNI_SEED=<n>` to draw a different fixed sample.
 
 > **Humanoid-GPT** (targets the Humanoid-GPT version used in the paper). The adapter now **self-handles**
 > the two upstream quirks below, so no manual `cd` or source edit is needed — you only set
