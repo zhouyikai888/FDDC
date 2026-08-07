@@ -41,6 +41,7 @@ no training/deploy runtime.
 | **Motions** | `data/data_stratified_900/` — the 900-clip stratified single-leg set (720 train / 90 val / 90 test). |
 | **Robot** | `robot/g1_29dof/` — the exact Unitree G1 29-DoF MuJoCo plant the policy was validated on. |
 | **Training** | `training/` — the FDDC-specific implementation (deployable dynamic-CoM obs + reward library) and how to retrain; see `training/TRAINING.md`. |
+| **Deployment** | `DEPLOYMENT.md` — the real on-robot recipe (the Holosoma `run_sim` / `run_policy` two-process stack, sim2sim + sim2real commands, safety) and `eval/deploy_sim2sim.py`, a self-contained sim2sim visualization that runs from this repo alone. |
 
 Together these are the paper's released **"full stack — data, code, policy, and benchmark"**:
 data = `data/`, code = `training/` (method) + `eval/` (harness), policy = `policy/`, benchmark = `eval/`.
