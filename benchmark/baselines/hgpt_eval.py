@@ -6,7 +6,11 @@ Usage:
 import os, sys, json, glob, re, time
 os.environ.setdefault("MUJOCO_GL", "egl")
 _ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))  # FDDC release repo root
-sys.path.insert(0, os.environ["HUMANOID_GPT_REPO"])
+_HGPT_REPO = os.environ["HUMANOID_GPT_REPO"]
+sys.path.insert(0, _HGPT_REPO)
+if len(sys.argv) > 2 and sys.argv[1] in ("run", "runs", "fullruns"):
+    sys.argv[2] = os.path.abspath(sys.argv[2])   # resolve motion_dir to absolute before we chdir into the repo
+os.chdir(_HGPT_REPO)                              # its tracking module reads storage/... relative to the repo root, so run from there
 import numpy as np, mujoco
 _HS=_ROOT
 os.environ.setdefault("WBT_EVAL_ROBOT_XML", os.path.join(_HS, "robot", "g1_29dof", "g1_29dof.xml"))
@@ -33,7 +37,11 @@ FREQ = 50; CTRL_DT = 1.0 / FREQ
 
 def build_harness():
     env_cfg = g1_infer_env_config(ctrl_dt=CTRL_DT)
-    policy = get_policy_onnx(PolicyArgs(load_path=ONNX, policy_type="mlp"))
+    try:
+        _pa = PolicyArgs(load_path=ONNX, policy_type="mlp")       # the upstream revision used in the paper
+    except TypeError:
+        _pa = PolicyArgs(onnx_track=ONNX, policy_type="mlp")      # later upstream renamed the arg load_path -> onnx_track
+    policy = get_policy_onnx(_pa)
     mj_sim = G1TrackMjSim(init_qpos=consts.DEFAULT_QPOS.copy(), headless=True, ctrl_dt=CTRL_DT)
     infer_fn = G1TrackInferFn(env_cfg, mj_sim.mj_model, policy, privileged=False)
     convert_model = mujoco.MjModel.from_xml_path(str(consts.TRACK_XML))

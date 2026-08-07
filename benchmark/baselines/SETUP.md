@@ -60,7 +60,7 @@ Humanoid-GPT / MOSAIC / SONIC use `runs`; HoloMotion uses `runm`. Confirm the ou
 | **GMT** (repo) | [zixuan417/humanoid-general-motion-tracking](https://github.com/zixuan417/humanoid-general-motion-tracking); weights `assets/pretrained_checkpoints/pretrained.pt` in-repo. Needs `mujoco_viewer`. | `GMT_REPO`, `GMT_WEIGHTS` | `python gmt_eval.py runs "$DATA" gmt 0 1 ./out_gmt` |
 | **TWIST** (repo) | [YanjieZe/TWIST](https://github.com/YanjieZe/TWIST) → `twist_general_motion_tracker.pt` (TorchScript); adapter reads `$TWIST_REPO/assets/g1/g1_sim2sim_with_wrist_roll.xml`. | `TWIST_REPO`, `TWIST_WEIGHTS` | `python twist_eval.py runs "$DATA" twist 0 1 ./out_twist` |
 | **OmniXtreme** (repo) | [Perkins729/OmniXtreme](https://github.com/Perkins729/OmniXtreme) → `policy/{base_policy_trt,residual_policy,fk_trt}.onnx`; runs its `deploy_mujoco.DeployNode`. Needs `mujoco`. **Run CPU-only** (see note). | `OMNI_REPO`, `OMNI_DIR` (=`$OMNI_REPO/policy`) | `CUDA_VISIBLE_DEVICES="" python omni_eval.py runs "$DATA" omni 0 1 ./out_omni` |
-| **Humanoid-GPT** (repo) | [GalaxyGeneralRobotics/Humanoid-GPT](https://github.com/GalaxyGeneralRobotics/Humanoid-GPT) → `pns_wo_priv216.onnx`; runs its `tracking` module (`G1TrackMjSim`). **Run from `$HUMANOID_GPT_REPO`; upstream-version-sensitive — see note.** | `HUMANOID_GPT_REPO`, `HGPT_ONNX` | `python hgpt_eval.py runs "$DATA" hgpt 0 1 ./out_hgpt` |
+| **Humanoid-GPT** (repo) | [GalaxyGeneralRobotics/Humanoid-GPT](https://github.com/GalaxyGeneralRobotics/Humanoid-GPT) → `pns_wo_priv216.onnx`; runs its `tracking` module (`G1TrackMjSim`). **The adapter `chdir`s into `$HUMANOID_GPT_REPO` itself and is upstream-version-tolerant — see note.** | `HUMANOID_GPT_REPO`, `HGPT_ONNX` | `python hgpt_eval.py runs "$DATA" hgpt 0 1 ./out_hgpt` |
 | **HoloMotion** (repo) | [HorizonRobotics/HoloMotion](https://github.com/HorizonRobotics/HoloMotion), HF [HorizonRobotics/HoloMotion_models](https://huggingface.co/HorizonRobotics/HoloMotion_models) → `model_14000.onnx`; uses its warp obs kernel. Needs `warp-lang`. | `HOLO_REPO`, `HOLO_ONNX` | `python holo_eval.py runm "$DATA" holo 0 1 ./out_holo` |
 
 > **SONIC gotcha:** `nvidia/GEAR-SONIC` ships two variants. Use the **root** model (`model_encoder.onnx`
@@ -71,14 +71,16 @@ Humanoid-GPT / MOSAIC / SONIC use `runs`; HoloMotion uses `runm`. Confirm the ou
 > its deploy code places some tensors on the GPU while the shared kernel stays on CPU, causing a CPU/CUDA
 > tensor mismatch that errors on all 90 clips. Hiding CUDA reproduces the paper's 0.0 / 5.6 / 94.4.
 
-> **Humanoid-GPT gotchas** (the adapter targets the Humanoid-GPT version used in the paper):
-> 1. **Working directory** — it reads `storage/...` paths *relative to the repo*, so launch it with
->    `$HUMANOID_GPT_REPO` as the current directory (`cd "$HUMANOID_GPT_REPO"` first; point `PYTHONPATH`
->    and the `hgpt_eval.py` path at their absolute locations).
-> 2. **Upstream API drift** — current upstream renamed the policy-loading argument `load_path` →
->    `onnx_track`, so the *latest* repo raises `TypeError: Args.__init__() got an unexpected keyword
->    argument 'load_path'`. Reproduce by checking out the commit the adapter targets, or by renaming that
->    one argument in `hgpt_eval.py` to match your checkout.
+> **Humanoid-GPT** (targets the Humanoid-GPT version used in the paper). The adapter now **self-handles**
+> the two upstream quirks below, so no manual `cd` or source edit is needed — you only set
+> `HUMANOID_GPT_REPO` and `HGPT_ONNX` and run it from anywhere:
+> 1. **Working directory** — its `tracking` module reads `storage/...` *relative to the repo*, so the
+>    adapter `os.chdir`s into `$HUMANOID_GPT_REPO` on startup (resolving the motion dir to an absolute
+>    path first, so a relative `$DATA` still works).
+> 2. **Upstream API drift** — a later upstream renamed the policy-loading argument `load_path` →
+>    `onnx_track`. The adapter tries `load_path` first and falls back to `onnx_track`, so it runs on
+>    either revision. If your checkout diverged further than this one argument, pin the upstream commit
+>    the adapter targets.
 
 > **ProtoMotions — clean vs noisy.** ProtoMotions is the **only** adapter that defaults to the *noisy*
 > condition (`PROTO_NOISE=0.20 PROTO_DELAY=1`); every other adapter defaults to clean. Table 1 is the
