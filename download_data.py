@@ -23,6 +23,7 @@ def main():
     snapshot_download(
         repo_id=HF_REPO,
         repo_type="dataset",
+        revision=HF_REVISION,
         local_dir=DEST,
         allow_patterns=["train/*.npz", "val/*.npz", "test/*.npz"],
     )

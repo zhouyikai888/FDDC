@@ -54,7 +54,7 @@ Humanoid-GPT / MOSAIC / SONIC use `runs`; HoloMotion uses `runm`. Confirm the ou
 
 | Baseline | Repo / weights (from the authors) | Env vars | Command (from `benchmark/baselines/`) |
 |---|---|---|---|
-| **ProtoMotions** (weights only) | [NVlabs/ProtoMotions](https://github.com/NVlabs/ProtoMotions) → `unified_pipeline.onnx` | `PROTO_ONNX` | `python proto_eval.py "$DATA" proto 0 1 1 ./out_proto` |
+| **ProtoMotions** (weights only) | [NVlabs/ProtoMotions](https://github.com/NVlabs/ProtoMotions) → `unified_pipeline.onnx` | `PROTO_ONNX` | `PROTO_NOISE=0 PROTO_DELAY=0 python proto_eval.py "$DATA" proto 0 1 1 ./out_proto` |
 | **MOSAIC** (weights only) | [BAAI-Humanoid/MOSAIC](https://github.com/BAAI-Humanoid/MOSAIC), HF [BAAI-Humanoid/MOSAIC_Model](https://huggingface.co/BAAI-Humanoid/MOSAIC_Model) → `gmt.onnx` | `MOSAIC_ONNX` | `python mosaic_eval.py runs "$DATA" mosaic 0 1 ./out_mosaic` |
 | **SONIC** (weights only) | [NVlabs/GR00T-WholeBodyControl](https://github.com/NVlabs/GR00T-WholeBodyControl), HF [nvidia/GEAR-SONIC](https://huggingface.co/nvidia/GEAR-SONIC) → the **root** `model_encoder.onnx` (obs **1762**) + `model_decoder.onnx` (obs 994). **NOT** the `low_latency/` variant (1247-dim) — this adapter matches the root model. | `SONIC_DIR` (dir with both root ONNX) | `python sonic_eval.py runs "$DATA" sonic 0 1 ./out_sonic` |
 | **GMT** (repo) | [zixuan417/humanoid-general-motion-tracking](https://github.com/zixuan417/humanoid-general-motion-tracking); weights `assets/pretrained_checkpoints/pretrained.pt` in-repo. Needs `mujoco_viewer`. | `GMT_REPO`, `GMT_WEIGHTS` | `python gmt_eval.py runs "$DATA" gmt 0 1 ./out_gmt` |
@@ -80,10 +80,15 @@ Humanoid-GPT / MOSAIC / SONIC use `runs`; HoloMotion uses `runm`. Confirm the ou
 >    argument 'load_path'`. Reproduce by checking out the commit the adapter targets, or by renaming that
 >    one argument in `hgpt_eval.py` to match your checkout.
 
+> **ProtoMotions — clean vs noisy.** ProtoMotions is the **only** adapter that defaults to the *noisy*
+> condition (`PROTO_NOISE=0.20 PROTO_DELAY=1`); every other adapter defaults to clean. Table 1 is the
+> **clean** condition, so run ProtoMotions with `PROTO_NOISE=0 PROTO_DELAY=0`. This changes no tier
+> (ProtoMotions is 0/90 Perfect either way) but does shift the continuous margins (§4).
+
 Example (ProtoMotions, end to end):
 
 ```bash
-PROTO_ONNX=/path/to/unified_pipeline.onnx \
+PROTO_ONNX=/path/to/unified_pipeline.onnx  PROTO_NOISE=0 PROTO_DELAY=0 \
     python proto_eval.py "$DATA" proto 0 1 1 ./out_proto
 ```
 
@@ -113,7 +118,56 @@ print(f"n={n}  Perfect={P:.1f}%  Marginal={max(0,100-P-F):.1f}%  Failure={F:.1f}
 PY
 ```
 
-## 4. Expected results (paper Table 1, clean, n=90)
+## 4. Continuous metrics (Table 1 balance columns + Appendix G)
+
+Section 3 gives the Perfect / Marginal / Failure tiers. The **continuous** columns — Margin-of-Stability
+and xCoM-out (Table 1), plus the full Appendix G suite (support-foot slippage, keypoint tracking error,
+jerk, time-to-fall) — come from each adapter's **continuous** sub-command, which writes the full
+per-motion metric fields; average each field over the 90 clips.
+
+| Adapter | Continuous sub-command |
+|---|---|
+| ProtoMotions | its normal positional run (already writes the full fields) |
+| MOSAIC, SONIC | `fullruns` (in place of `runs`) |
+| GMT, TWIST | `fullruns` (in place of `runs`) |
+| OmniXtreme, Humanoid-GPT | `fullruns` (in place of `runs`) — via `fullmetrics_post.py` |
+| HoloMotion | `runm` (already the full-metric sub-command) |
+
+e.g. `CUDA_VISIBLE_DEVICES="" python omni_eval.py fullruns "$DATA" omni 0 1 ./out_omni`. Every adapter's
+continuous output carries the same `metrics.py` fields (all averaged over the 90 clips):
+
+| Paper quantity | `metrics.py` field |
+|---|---|
+| MoS (mediolateral / fore–aft) | `xcom_margin_ml_min` / `xcom_margin_ap_min` |
+| xCoM-out (time outside support) | `xcom_margin_viol_dur` |
+| support-foot slippage (mm/s) | `slippage_mm_s` |
+| keypoint tracking error | `track_Epos` (+ `track_Evel`, `track_Eacc`) |
+| jerk | `action_jerk_rms`, `dof_vel_jerk_rms` |
+| time-to-fall | `time_to_fall` |
+
+```bash
+python - <<'PY'
+import json, glob, numpy as np
+pm = {}
+for f in glob.glob("./out_omni/*.json"):          # <- the continuous run's output dir
+    pm.update(json.load(open(f)).get("per_motion", {}))
+rows = [v for v in pm.values() if "xcom_margin_ap_min" in v]
+mean = lambda k: float(np.mean([r[k] for r in rows]))
+print(f"n={len(rows)}  MoS_ml/ap={mean('xcom_margin_ml_min'):.3f}/{mean('xcom_margin_ap_min'):.3f}  "
+      f"xCoM-out={mean('xcom_margin_viol_dur'):.2f}s  slip={mean('slippage_mm_s'):.0f}mm/s  "
+      f"jerk={mean('action_jerk_rms'):.2f}")
+PY
+```
+
+> **Reading these numbers.** Table 1 / Appendix G are the **clean** condition (K=1, no observation noise);
+> run ProtoMotions with `PROTO_NOISE=0 PROTO_DELAY=0` (see its note above — the one adapter that defaults to
+> noisy). For OmniXtreme / Humanoid-GPT the action channel is recovered from the recorded joint positions
+> (their harness runs its own loop), so `action_jerk_rms` is a position-jerk proxy; `dof_vel_jerk_rms` uses
+> the true joint velocities and is directly comparable. These continuous diagnostics reproduce up to
+> condition-consistency, not necessarily cross-machine bit-exact — a small numerical spread on the
+> diagnostic margins is expected; the Perfect / Marginal / Failure tiers are robust.
+
+## 5. Expected results (paper Table 1, clean, n=90)
 
 | Baseline | Perfect | Marginal | Failure |
 |----------|:-------:|:--------:|:-------:|
@@ -130,7 +184,7 @@ The weights-only adapters (ProtoMotions, MOSAIC, SONIC) were spot-checked to rep
 directly from this released package (ProtoMotions full-90: Perfect 0.0 / Failure 46.7, matching the
 table). The repo-based baselines reproduce the same Perfect = 0 once their repo + weights are supplied.
 
-## 5. Robot metadata
+## 6. Robot metadata
 
 `robot_meta.onnx` is a tiny (~76 KB) metadata-only ONNX carrying the Unitree-G1 constants the adapters
 read for the shared PD (`dof_names`, `kp`, `kd`, `action_scale`, default pose). Override with
