@@ -78,8 +78,10 @@ FDDC checkpoint (`model_0262000.pt`, step 262k) was trained on this set; checkpo
 - **Heavy stack.** Training needs IsaacSim (NVIDIA EULA) + multiple GPUs (the released run used 8× RTX
   3080 / or 2× RTX 3090). Most users will only ever run the *benchmark* (`../eval/`), which needs none
   of this.
-- **Version drift.** The `fddc_src/` files were modified from Holosoma as of 2026-07-28 (the version behind
-  Table 6). If upstream Holosoma APIs have since moved, minor adaptation may be needed — this is the
-  known trade-off of shipping the FDDC layer rather than a frozen full-framework fork.
+- **Version drift.** The `fddc_src/` files are FDDC's modifications to Holosoma at upstream commit
+  `5b61d5768bc8e44710e2983db6263e174193981c` (`amazon-far/holosoma`, 2026-07-24 — the version behind
+  Table 6). To reconstruct the training stack, check out Holosoma at that commit and overlay these files;
+  on a newer upstream, minor adaptation may be needed — the known trade-off of shipping the FDDC layer
+  rather than a frozen full-framework fork.
 - **Exact reward weights and hyperparameters** are in `config_values/wbt/g1/{reward,experiment}.py` and,
   in paper form, in Table 6.
