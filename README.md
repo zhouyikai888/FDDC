@@ -1,12 +1,14 @@
+<a href="https://www.pku.edu.cn/"><img src="assets/pku_logo.png" alt="Peking University" width="90" align="right"/></a>
+
 # FDDC — First Deployable Dynamic-CoM
 
 **A unified policy and a method-agnostic sim2sim benchmark for humanoid single-leg balance.**
 
-📄 Paper: [arXiv:2608.00500](https://arxiv.org/abs/2608.00500)
+📄 Paper: [arXiv:2608.00500](https://arxiv.org/abs/2608.00500) &nbsp;·&nbsp; 📺 Video: [YouTube](https://www.youtube.com/watch?v=ue3DhT5B3mU)
 
 ![FDDC holds clean single-leg balance across 90 stratified poses and transfers to a real Unitree G1](assets/fig_teaser.png)
 
-![FDDC on a real Unitree G1 — single-leg balance (mid-squat, high swing)](assets/demo.gif)
+[![FDDC on a real Unitree G1 — single-leg balance (mid-squat, high swing); click to watch the full video](assets/demo.gif)](https://www.youtube.com/watch?v=ue3DhT5B3mU)
 
 Unified humanoid policies track dances, runs, and backflips, yet stumble on a simple demand: staying
 balanced on one leg. FDDC is the first single-leg-balance policy to deploy **directly on a real Unitree
