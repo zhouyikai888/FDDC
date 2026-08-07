@@ -7,13 +7,7 @@ deployment **recipe and commands** we use, plus the **safety caveats**.
 The on-robot runtime is the **Holosoma two-process inference stack** (`run_sim.py` + `run_policy.py`,
 from the public [`amazon-far/holosoma`](https://github.com/amazon-far/holosoma) framework the training code
 is built on — see [`training/`](training/)). That framework and the Unitree SDK are **not bundled in this
-repository**; the commands below document how the policy is deployed on it. For a **self-contained,
-no-framework look** at the same policy holding balance in MuJoCo (using this repo's benchmark harness, not
-the deploy runtime), use the sim2sim demo:
-
-```bash
-cd eval && python deploy_sim2sim.py          # this repo only; a benchmark-harness reconstruction, not run_sim/run_policy
-```
+repository**; the commands below document how the policy is deployed on it.
 
 ## The deployed artifact
 
