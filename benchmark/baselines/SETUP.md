@@ -28,7 +28,7 @@ DATA="$(pwd)/../../data/data_stratified_900/test"   # the 90 held-out test clips
 ```
 
 - **Python environment.** The lightweight baselines (ProtoMotions, MOSAIC, SONIC) need only
-  `mujoco`, `onnxruntime`, `numpy` (and `torch` for TWIST/GMT weights). The repo-based baselines
+  `mujoco`, `onnx`, `onnxruntime`, `numpy` (and `torch` for TWIST/GMT weights). The repo-based baselines
   (GMT, TWIST, OmniXtreme, Humanoid-GPT, HoloMotion) additionally need **that baseline's own repo
   installed with its requirements** (each was run in its own conda env to avoid dependency clashes) —
   plus `mujoco_viewer` (GMT, OmniXtreme) or `warp-lang` (HoloMotion).

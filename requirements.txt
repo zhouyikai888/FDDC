@@ -5,7 +5,8 @@ numpy>=1.24        # (tested 1.26.4)
 mujoco>=3.2        # (tested 3.10.0)
 torch>=2.1         # (tested 2.12.1; used only to load the .pt state_dict — CPU build is fine)
 
-# onnxruntime is NOT needed for the headline benchmark: run_eval.py scores model_0262000.pt directly
-# from the .pt (via fast_policy.py). It IS needed to reproduce the 8 baselines (benchmark/baselines/),
-# which run ONNX policies — install it (and each baseline's own deps) per benchmark/baselines/SETUP.md:
+# The headline benchmark (run_eval.py) needs nothing below — it scores model_0262000.pt directly from
+# the .pt via fast_policy.py. onnx + onnxruntime are needed for eval/export_onnx.py (exports the actor
+# ONNX) and for the 8 baseline adapters (benchmark/baselines/, see SETUP.md); install both if you use either:
+# onnx>=1.14         # (tested 1.17)
 # onnxruntime>=1.16  # (tested 1.23.2)
