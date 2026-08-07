@@ -10,10 +10,10 @@ and is **not** the on-robot deploy runtime. The actual deployment pipeline (the 
 
     python deploy_sim2sim.py                        # interactive viewer, a default clip
     python deploy_sim2sim.py --motion left_1077     # a specific clip (ids: data/.../test/)
-    python deploy_sim2sim.py --video out.mp4         # headless render to a video (needs imageio)
+    python deploy_sim2sim.py --video out.mp4         # headless render to a video (.mp4/.gif; needs imageio)
     python deploy_sim2sim.py --condition noisy       # with deployment-relevant observation noise
 """
-import argparse, os, sys
+import argparse, os, sys, re
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -39,10 +39,11 @@ def main():
     os.environ.setdefault("OMP_NUM_THREADS", "1")
     os.environ["WBT_EVAL_ROBOT_XML"] = args.robot_xml
     os.environ["WBT_EVAL_MOTION_DIR"] = args.motion_dir
-    if args.video:
-        os.environ.setdefault("MUJOCO_GL", "egl")   # headless offscreen render
+    # GL backend: headless EGL for --video; the windowed GLFW backend for the live viewer. Forcing glfw
+    # overrides any inherited MUJOCO_GL=egl in the shell (a common cause of a *black* viewer window).
+    os.environ["MUJOCO_GL"] = os.environ.get("MUJOCO_GL", "egl") if args.video else "glfw"
     sys.path.insert(0, HERE)
-    import glob, re, mujoco
+    import glob, mujoco
     import wbt_rollout as W
     from fast_policy import FastPolicy
 
@@ -69,7 +70,22 @@ def main():
     fell = np.asarray(log["fell"]); tilt = np.degrees(np.asarray(log["tilt"]))
     print(f"frames   : {T} ({T/args.fps:.1f}s)   fell={bool(fell[-1])}   max_tilt={tilt.max():.0f} deg")
 
-    model = W._load_deploy_model()
+    # A render-only model: the robot XML with an absolute meshdir, its floor-referencing <contact> block
+    # dropped (we only replay qpos, no physics), and an explicit floor + two lights so the scene is lit
+    # regardless of the GL backend or headlight defaults.
+    def render_model():
+        txt = open(args.robot_xml).read().replace('meshdir="./meshes/"',
+                                                   f'meshdir="{os.path.dirname(args.robot_xml)}/meshes/"')
+        txt = re.sub(r"<contact>.*?</contact>", "", txt, flags=re.DOTALL)
+        extra = ('<light name="_demo_top" directional="true" pos="0 0 5" dir="0 0 -1" '
+                 'diffuse="0.6 0.6 0.6" specular="0.1 0.1 0.1" castshadow="false"/>'
+                 '<light name="_demo_side" directional="true" pos="3 -3 4" dir="-3 3 -4" '
+                 'diffuse="0.4 0.4 0.4" castshadow="false"/>'
+                 '<geom name="_demo_floor" type="plane" size="0 0 0.05" pos="0 0 0" '
+                 'rgba="0.8 0.83 0.86 1"/></worldbody>')
+        return mujoco.MjModel.from_xml_string(txt.replace("</worldbody>", extra, 1))
+
+    model = render_model()
     data = mujoco.MjData(model)
 
     def set_frame(t):
@@ -83,6 +99,7 @@ def main():
             sys.exit("--video needs imageio:  pip install imageio imageio-ffmpeg   (or render a .gif)")
         renderer = mujoco.Renderer(model, 480, 640)
         cam = mujoco.MjvCamera()
+        mujoco.mjv_defaultFreeCamera(model, cam)
         cam.distance, cam.elevation, cam.azimuth = 3.0, -15.0, 135.0
         frames = []
         for t in range(T):
@@ -96,12 +113,14 @@ def main():
         import time
         import mujoco.viewer
         with mujoco.viewer.launch_passive(model, data) as v:
+            v.cam.distance, v.cam.elevation, v.cam.azimuth = 3.0, -15.0, 135.0
             print("viewer open — close the window to exit (the trajectory loops)")
             while v.is_running():
                 for t in range(T):
                     if not v.is_running():
                         break
                     set_frame(t)
+                    v.cam.lookat[:] = qpos[t, 0:3]
                     v.sync()
                     time.sleep(1.0 / args.fps)
 
