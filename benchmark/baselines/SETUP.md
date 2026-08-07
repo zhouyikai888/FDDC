@@ -195,6 +195,6 @@ table). The repo-based baselines reproduce the same Perfect = 0 once their repo 
 
 ## 6. Robot metadata
 
-`robot_meta.onnx` is a tiny (~76 KB) metadata-only ONNX carrying the Unitree-G1 constants the adapters
+`robot_meta.onnx` is a tiny (~3 KB) metadata-only ONNX carrying the Unitree-G1 constants the adapters
 read for the shared PD (`dof_names`, `kp`, `kd`, `action_scale`, default pose). Override with
 `FDDC_ROBOT_META_ONNX`. These constants equal `../../policy/robot_config.json`.
